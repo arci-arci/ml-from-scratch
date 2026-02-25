@@ -1,8 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"io/fs"
 	"os"
+	"path"
 	"path/filepath"
 	"strings"
 )
@@ -20,6 +22,15 @@ func readContent(path string) string {
 
 func cleanFileContent(content string, what string) string {
 	return strings.ReplaceAll(content, what, "")
+}
+
+func getDocAmount(root string, class string) int {
+	docs, dirErr := os.ReadDir(path.Join(root, class))
+	if dirErr != nil {
+		panic(dirErr)
+	}
+
+	return len(docs)
 }
 
 func main() {
@@ -62,4 +73,10 @@ func main() {
 		panic(err)
 	}
 
+	hamDocs := getDocAmount(rootFolder, "ham")
+	spamDocs := getDocAmount(rootFolder, "spam")
+	totalDocs := hamDocs + spamDocs
+
+	fmt.Printf("P(ham) => %v\n", float64(hamDocs)/float64(totalDocs))
+	fmt.Printf("P(spam) => %v\n", float64(spamDocs)/float64(totalDocs))
 }
