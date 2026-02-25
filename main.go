@@ -82,7 +82,7 @@ func calcualteTermsAmount(bow *BoW) int64 {
 
 func createVocabulary(bow *BoW, v *Vocabulary) {
 	for t := range *bow {
-		(*v)[t] = (*bow)[t]
+		(*v)[t] += (*bow)[t]
 	}
 }
 
