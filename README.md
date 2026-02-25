@@ -5,3 +5,4 @@ This is a (non comprehensive) list of implemented ML algorithms:
 - K-Means
 - Decision tree
 - Linear regression and classification
+- KNN
