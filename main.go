@@ -33,11 +33,9 @@ func getDocAmount(root string, class string) int {
 	return len(docs)
 }
 
-func main() {
-	bow := BoW{}
-	rootFolder := "enron1"
-
-	err := filepath.WalkDir(rootFolder, func(path string, info fs.DirEntry, err error) error {
+func readClassDocuments(root string, class string, bow *BoW) error {
+	path := path.Join(root, class)
+	err := filepath.WalkDir(path, func(path string, info fs.DirEntry, err error) error {
 		if err != nil {
 			panic(err)
 		}
@@ -63,12 +61,35 @@ func main() {
 		tokens := strings.FieldsSeq(content)
 
 		for token := range tokens {
-			bow[token] += 1
+			(*bow)[token] += 1
 		}
 
 		return nil
 	})
 
+	return err
+}
+
+func calcualteTermsAmount(bow *BoW) int64 {
+	var total int64
+	for t := range *bow {
+		total += (*bow)[t]
+	}
+
+	return total
+}
+
+func main() {
+	hamBoW := BoW{}
+	spamBoW := BoW{}
+	rootFolder := "enron1"
+
+	err := readClassDocuments(rootFolder, "ham", &hamBoW)
+	if err != nil {
+		panic(err)
+	}
+
+	err = readClassDocuments(rootFolder, "spam", &spamBoW)
 	if err != nil {
 		panic(err)
 	}
@@ -77,6 +98,16 @@ func main() {
 	spamDocs := getDocAmount(rootFolder, "spam")
 	totalDocs := hamDocs + spamDocs
 
-	fmt.Printf("P(ham) => %v\n", float64(hamDocs)/float64(totalDocs))
-	fmt.Printf("P(spam) => %v\n", float64(spamDocs)/float64(totalDocs))
+	hamProb := float64(hamDocs) / float64(totalDocs)
+	spamProb := float64(spamDocs) / float64(totalDocs)
+
+	termsForHam := calcualteTermsAmount(&hamBoW)
+	termsForSpam := calcualteTermsAmount(&spamBoW)
+
+	fmt.Printf("P(ham) => %v\n", hamProb)
+	fmt.Printf("P(spam) => %v\n", spamProb)
+	fmt.Printf("terms inside ham => %v\n", termsForHam)
+	fmt.Printf("terms inside spam => %v\n", termsForSpam)
+	fmt.Printf("|V| => %v\n", len(hamBoW)+len(spamBoW))
+
 }
