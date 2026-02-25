@@ -123,5 +123,7 @@ func main() {
 
 	t := "reflected"
 	probForHam := (float64(hamBoW[t] + 1)) / (float64(termsForHam + int64(len(v))))
-	fmt.Printf("P( 'reflected' | ham ) => %v\n", probForHam)
+	probForSpam := (float64(spamBoW[t] + 1)) / (float64(termsForHam + int64(len(v))))
+	fmt.Printf("P( '%v' | ham ) => %v\n", t, probForHam)
+	fmt.Printf("P( '%v' | spam ) => %v\n", t, probForSpam)
 }
