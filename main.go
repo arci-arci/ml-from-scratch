@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"io/fs"
 	"os"
 	"path/filepath"
@@ -25,8 +24,9 @@ func cleanFileContent(content string, what string) string {
 
 func main() {
 	bow := BoW{}
+	rootFolder := "enron1"
 
-	err := filepath.WalkDir("enron1", func(path string, info fs.DirEntry, err error) error {
+	err := filepath.WalkDir(rootFolder, func(path string, info fs.DirEntry, err error) error {
 		if err != nil {
 			panic(err)
 		}
@@ -62,7 +62,4 @@ func main() {
 		panic(err)
 	}
 
-	for token := range bow {
-		fmt.Printf("%v => %v\n", token, bow[token])
-	}
 }
