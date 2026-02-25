@@ -10,6 +10,7 @@ import (
 )
 
 type BoW = map[string]int64
+type Vocabulary = map[string]int64
 
 func readContent(path string) string {
 	data, err := os.ReadFile(path)
@@ -79,9 +80,16 @@ func calcualteTermsAmount(bow *BoW) int64 {
 	return total
 }
 
+func createVocabulary(bow *BoW, v *Vocabulary) {
+	for t := range *bow {
+		(*v)[t] = (*bow)[t]
+	}
+}
+
 func main() {
 	hamBoW := BoW{}
 	spamBoW := BoW{}
+	v := Vocabulary{}
 	rootFolder := "enron1"
 
 	err := readClassDocuments(rootFolder, "ham", &hamBoW)
@@ -93,6 +101,9 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+
+	createVocabulary(&hamBoW, &v)
+	createVocabulary(&spamBoW, &v)
 
 	hamDocs := getDocAmount(rootFolder, "ham")
 	spamDocs := getDocAmount(rootFolder, "spam")
@@ -108,6 +119,9 @@ func main() {
 	fmt.Printf("P(spam) => %v\n", spamProb)
 	fmt.Printf("terms inside ham => %v\n", termsForHam)
 	fmt.Printf("terms inside spam => %v\n", termsForSpam)
-	fmt.Printf("|V| => %v\n", len(hamBoW)+len(spamBoW))
+	fmt.Printf("|V| => %v\n", len(v))
 
+	t := "reflected"
+	probForHam := (float64(hamBoW[t] + 1)) / (float64(termsForHam + int64(len(v))))
+	fmt.Printf("P( 'reflected' | ham ) => %v\n", probForHam)
 }
