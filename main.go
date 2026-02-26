@@ -101,7 +101,7 @@ func createVocabulary(bow *BoW, v *Vocabulary) {
 }
 
 func train(options BayesOptions) BayesClassifier {
-	classifider := BayesClassifier{}
+	classifier := BayesClassifier{}
 	termsForHam := calcualteTermsAmount(options.hamBoW)
 	termsForSpam := calcualteTermsAmount(options.spamBoW)
 	vSize := len(*options.vocabulary)
@@ -109,16 +109,15 @@ func train(options BayesOptions) BayesClassifier {
 	for token := range *options.hamBoW {
 		probForHam := (float64((*options.hamBoW)[token] + 1)) / (float64(termsForHam + int64(vSize)))
 		probForSpam := (float64((*options.spamBoW)[token] + 1)) / (float64(termsForSpam + int64(vSize)))
-
 		tPros := probabilities{
 			ham:  probForHam,
 			spam: probForSpam,
 		}
 
-		classifider[token] = tPros
+		classifier[token] = tPros
 	}
 
-	return classifider
+	return classifier
 }
 
 func main() {
@@ -157,7 +156,7 @@ func main() {
 
 	classifier := train(option)
 	for t := range classifier {
-		fmt.Printf("%v => %v\n", t, classifier[t])
+		fmt.Printf("%v => {ham = %v, spam = %v}\n", t, classifier[t].ham, classifier[t].spam)
 	}
 
 }
