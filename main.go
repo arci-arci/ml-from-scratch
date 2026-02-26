@@ -9,8 +9,22 @@ import (
 	"strings"
 )
 
+type probabilities struct {
+	ham  float64
+	spam float64
+}
+
+type BayesOptions struct {
+	hamProb    float64
+	spamProb   float64
+	hamBoW     *BoW
+	spamBoW    *BoW
+	vocabulary *Vocabulary
+}
+
 type BoW = map[string]int64
 type Vocabulary = map[string]int64
+type BayesClassifier = map[string]probabilities
 
 func readContent(path string) string {
 	data, err := os.ReadFile(path)
@@ -86,6 +100,27 @@ func createVocabulary(bow *BoW, v *Vocabulary) {
 	}
 }
 
+func train(options BayesOptions) BayesClassifier {
+	classifider := BayesClassifier{}
+	termsForHam := calcualteTermsAmount(options.hamBoW)
+	termsForSpam := calcualteTermsAmount(options.spamBoW)
+	vSize := len(*options.vocabulary)
+
+	for token := range *options.hamBoW {
+		probForHam := (float64((*options.hamBoW)[token] + 1)) / (float64(termsForHam + int64(vSize)))
+		probForSpam := (float64((*options.spamBoW)[token] + 1)) / (float64(termsForSpam + int64(vSize)))
+
+		tPros := probabilities{
+			ham:  probForHam,
+			spam: probForSpam,
+		}
+
+		classifider[token] = tPros
+	}
+
+	return classifider
+}
+
 func main() {
 	hamBoW := BoW{}
 	spamBoW := BoW{}
@@ -112,18 +147,17 @@ func main() {
 	hamProb := float64(hamDocs) / float64(totalDocs)
 	spamProb := float64(spamDocs) / float64(totalDocs)
 
-	termsForHam := calcualteTermsAmount(&hamBoW)
-	termsForSpam := calcualteTermsAmount(&spamBoW)
+	option := BayesOptions{
+		hamProb:    hamProb,
+		spamProb:   spamProb,
+		hamBoW:     &hamBoW,
+		spamBoW:    &spamBoW,
+		vocabulary: &v,
+	}
 
-	fmt.Printf("P(ham) => %v\n", hamProb)
-	fmt.Printf("P(spam) => %v\n", spamProb)
-	fmt.Printf("terms inside ham => %v\n", termsForHam)
-	fmt.Printf("terms inside spam => %v\n", termsForSpam)
-	fmt.Printf("|V| => %v\n", len(v))
+	classifier := train(option)
+	for t := range classifier {
+		fmt.Printf("%v => %v\n", t, classifier[t])
+	}
 
-	t := "reflected"
-	probForHam := (float64(hamBoW[t] + 1)) / (float64(termsForHam + int64(len(v))))
-	probForSpam := (float64(spamBoW[t] + 1)) / (float64(termsForHam + int64(len(v))))
-	fmt.Printf("P( '%v' | ham ) => %v\n", t, probForHam)
-	fmt.Printf("P( '%v' | spam ) => %v\n", t, probForSpam)
 }
