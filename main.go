@@ -193,7 +193,7 @@ func classify(options ClassificationOption) ClassificationResult {
 
 func main() {
 	v := Vocabulary{}
-	folders := []string{"enron1", "enron4", "enron5"}
+	folders := []string{"enron1", "enron4", "enron5", "enron6"}
 	hamBoW := BoW{}
 	spamBoW := BoW{}
 	var totalDocs int
@@ -227,11 +227,8 @@ func main() {
 	}
 
 	model := train(option)
-
 	hamProb := float64(totalHamDocs) / float64(totalDocs)
 	spamProb := float64(totalSpamDocs) / float64(totalDocs)
-	hamTestBoW := BoW{}
-	spamTestBoW := BoW{}
 	testRootFolder := "enron2"
 
 	hamFile, dirErr := os.ReadDir(path.Join(testRootFolder, "ham"))
@@ -243,7 +240,9 @@ func main() {
 	var fp int
 	var fn int
 	var tn int
+
 	for _, doc := range hamFile {
+		hamTestBoW := BoW{}
 		err := readClassDocument(testRootFolder, "ham", doc.Name(), &hamTestBoW)
 		if err != nil {
 			panic(err)
@@ -270,6 +269,7 @@ func main() {
 	}
 
 	for _, doc := range spamFile {
+		spamTestBoW := BoW{}
 		err := readClassDocument(testRootFolder, "spam", doc.Name(), &spamTestBoW)
 		if err != nil {
 			panic(err)
@@ -290,6 +290,8 @@ func main() {
 		}
 	}
 
+	fmt.Printf("Test set size 'ham' = %v\n", len(hamFile))
+	fmt.Printf("Test set size 'spam' = %v\n", len(spamFile))
 	fmt.Printf("True Positive = %v\n", tp)
 	fmt.Printf("True Negative = %v\n", tn)
 	fmt.Printf("False Negative = %v\n", fn)
