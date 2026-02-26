@@ -156,8 +156,8 @@ func train(options BayesOptions) BayesClassifier {
 
 	for token := range *options.vocabulary {
 		// Probability calculated based on Laplace Correction
-		probForHam := math.Log(float64((*options.hamBoW)[token]+1)) - math.Log(float64(termsForHam+int64(vSize)))
-		probForSpam := math.Log(float64((*options.spamBoW)[token]+1)) - math.Log(float64(termsForSpam+int64(vSize)))
+		probForHam := float64((*options.hamBoW)[token]+1) / float64(termsForHam+int64(vSize))
+		probForSpam := float64((*options.spamBoW)[token]+1) / float64(termsForSpam+int64(vSize))
 		tProb := probabilities{
 			ham:  probForHam,
 			spam: probForSpam,
@@ -181,8 +181,8 @@ func classify(options ClassificationOption) ClassificationResult {
 			continue
 		}
 
-		docInHam += tProb.ham
-		docInSpam += tProb.spam
+		docInHam += math.Log(tProb.ham)
+		docInSpam += math.Log(tProb.spam)
 	}
 
 	return ClassificationResult{
