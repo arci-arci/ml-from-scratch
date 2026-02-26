@@ -87,6 +87,8 @@ func readClassDocuments(root string, class string, bow *BoW) error {
 		content = cleanFileContent(content, "~")
 		content = cleanFileContent(content, "{")
 		content = cleanFileContent(content, "}")
+		content = cleanFileContent(content, ">")
+		content = cleanFileContent(content, "<")
 
 		tokens := strings.FieldsSeq(content)
 
@@ -119,6 +121,8 @@ func readClassDocument(root string, class string, fileName string, bow *BoW) err
 	content = cleanFileContent(content, "~")
 	content = cleanFileContent(content, "{")
 	content = cleanFileContent(content, "}")
+	content = cleanFileContent(content, ">")
+	content = cleanFileContent(content, "<")
 
 	tokens := strings.FieldsSeq(content)
 
