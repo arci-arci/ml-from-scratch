@@ -224,20 +224,67 @@ func main() {
 	}
 
 	classifier := train(option)
-	testBoW := BoW{}
-	err = readClassDocument("enron2", "spam", "0026.2001-07-13.SA_and_HP.spam.txt", &testBoW)
-	if err != nil {
-		panic(err)
+	hamTestBoW := BoW{}
+	spamTestBoW := BoW{}
+
+	testRootFolder := "enron2"
+	hamFile, dirErr := os.ReadDir(path.Join(testRootFolder, "ham"))
+	if dirErr != nil {
+		panic(dirErr)
 	}
 
-	cOption := ClassificationOption{
-		hamProb:    hamProb,
-		spamProb:   spamProb,
-		classifier: &classifier,
-		doc:        &testBoW,
+	var tp int
+	var fp int
+	var fn int
+	for _, doc := range hamFile {
+		err = readClassDocument(testRootFolder, "ham", doc.Name(), &hamTestBoW)
+		if err != nil {
+			panic(err)
+		}
+
+		cOption := ClassificationOption{
+			hamProb:    hamProb,
+			spamProb:   spamProb,
+			classifier: &classifier,
+			doc:        &hamTestBoW,
+		}
+
+		r := classify(cOption)
+		if r.ham > r.spam {
+			tp += 1
+		} else {
+			fn += 1
+		}
 	}
 
-	r := classify(cOption)
-	fmt.Printf("P(D|ham) = %v\n", r.ham)
-	fmt.Printf("P(D|spam) = %v\n", r.spam)
+	spamFile, dirErr := os.ReadDir(path.Join(testRootFolder, "spam"))
+	if dirErr != nil {
+		panic(dirErr)
+	}
+
+	for _, doc := range spamFile {
+		err = readClassDocument(testRootFolder, "spam", doc.Name(), &spamTestBoW)
+		if err != nil {
+			panic(err)
+		}
+
+		cOption := ClassificationOption{
+			hamProb:    hamProb,
+			spamProb:   spamProb,
+			classifier: &classifier,
+			doc:        &spamTestBoW,
+		}
+
+		r := classify(cOption)
+		if r.ham > r.spam {
+			fp += 1
+		}
+	}
+
+	fmt.Printf("True Positive = %v\n", tp)
+	fmt.Printf("False Negative = %v\n", fn)
+	fmt.Printf("False Positive = %v\n", fp)
+	fmt.Printf("Recall = %v\n", float64(tp)/float64(tp+fn))
+	fmt.Printf("Precision = %v\n", float64(tp)/float64(tp+fp))
+
 }
