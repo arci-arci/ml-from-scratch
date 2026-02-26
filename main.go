@@ -151,6 +151,7 @@ func train(options BayesOptions) BayesClassifier {
 	vSize := len(*options.vocabulary)
 
 	for token := range *options.vocabulary {
+		// Probability calculated based on Laplace Correction
 		probForHam := (float64((*options.hamBoW)[token] + 1)) / (float64(termsForHam + int64(vSize)))
 		probForSpam := (float64((*options.spamBoW)[token] + 1)) / (float64(termsForSpam + int64(vSize)))
 		tProb := probabilities{
@@ -171,6 +172,7 @@ func classify(options ClassificationOption) ClassificationResult {
 	for token := range *options.doc {
 		tProb := (*options.classifier)[token]
 
+		// Skipping rare tokens
 		if tProb.ham == 0 || tProb.spam == 0 {
 			continue
 		}
