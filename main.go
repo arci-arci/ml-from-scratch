@@ -236,6 +236,7 @@ func main() {
 	var tp int
 	var fp int
 	var fn int
+	var tn int
 	for _, doc := range hamFile {
 		err = readClassDocument(testRootFolder, "ham", doc.Name(), &hamTestBoW)
 		if err != nil {
@@ -276,7 +277,9 @@ func main() {
 		}
 
 		r := classify(cOption)
-		if r.ham > r.spam {
+		if r.spam > r.ham {
+			tn += 1
+		} else {
 			fp += 1
 		}
 	}
@@ -286,5 +289,6 @@ func main() {
 	fmt.Printf("False Positive = %v\n", fp)
 	fmt.Printf("Recall = %v\n", float64(tp)/float64(tp+fn))
 	fmt.Printf("Precision = %v\n", float64(tp)/float64(tp+fp))
+	fmt.Printf("Accuracy = %v\n", float64(tp+tn)/float64(tp+tn+fp+fn))
 
 }
