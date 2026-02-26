@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"io/fs"
+	"math"
 	"os"
 	"path"
 	"path/filepath"
@@ -14,25 +15,35 @@ type probabilities struct {
 	spam float64
 }
 
-type BayesOptions struct {
+type ClassificationOption struct {
 	hamProb    float64
 	spamProb   float64
+	classifier *BayesClassifier
+	doc        *BoW
+}
+
+type BayesOptions struct {
 	hamBoW     *BoW
 	spamBoW    *BoW
 	vocabulary *Vocabulary
+}
+
+type ClassificationResult struct {
+	ham  float64
+	spam float64
 }
 
 type BoW = map[string]int64
 type Vocabulary = map[string]int64
 type BayesClassifier = map[string]probabilities
 
-func readContent(path string) string {
+func readContent(path string) (string, error) {
 	data, err := os.ReadFile(path)
 	if err != nil {
-		panic(err)
+		return "", err
 	}
 
-	return string(data)
+	return string(data), nil
 }
 
 func cleanFileContent(content string, what string) string {
@@ -59,7 +70,11 @@ func readClassDocuments(root string, class string, bow *BoW) error {
 			return nil
 		}
 
-		content := readContent(path)
+		content, err := readContent(path)
+		if err != nil {
+			panic(err)
+		}
+
 		content = cleanFileContent(content, "-")
 		content = cleanFileContent(content, "/")
 		content = cleanFileContent(content, ";")
@@ -85,6 +100,35 @@ func readClassDocuments(root string, class string, bow *BoW) error {
 	return err
 }
 
+func readClassDocument(root string, class string, fileName string, bow *BoW) error {
+	path := path.Join(root, class, fileName)
+	content, err := readContent(path)
+	if err != nil {
+		panic(err)
+	}
+
+	content = cleanFileContent(content, "-")
+	content = cleanFileContent(content, "/")
+	content = cleanFileContent(content, ";")
+	content = cleanFileContent(content, ".")
+	content = cleanFileContent(content, ",")
+	content = cleanFileContent(content, "@")
+	content = cleanFileContent(content, "(")
+	content = cleanFileContent(content, ")")
+	content = cleanFileContent(content, ":")
+	content = cleanFileContent(content, "~")
+	content = cleanFileContent(content, "{")
+	content = cleanFileContent(content, "}")
+
+	tokens := strings.FieldsSeq(content)
+
+	for token := range tokens {
+		(*bow)[token] += 1
+	}
+
+	return nil
+}
+
 func calcualteTermsAmount(bow *BoW) int64 {
 	var total int64
 	for t := range *bow {
@@ -106,18 +150,39 @@ func train(options BayesOptions) BayesClassifier {
 	termsForSpam := calcualteTermsAmount(options.spamBoW)
 	vSize := len(*options.vocabulary)
 
-	for token := range *options.hamBoW {
+	for token := range *options.vocabulary {
 		probForHam := (float64((*options.hamBoW)[token] + 1)) / (float64(termsForHam + int64(vSize)))
 		probForSpam := (float64((*options.spamBoW)[token] + 1)) / (float64(termsForSpam + int64(vSize)))
-		tPros := probabilities{
+		tProb := probabilities{
 			ham:  probForHam,
 			spam: probForSpam,
 		}
 
-		classifier[token] = tPros
+		classifier[token] = tProb
 	}
 
 	return classifier
+}
+
+func classify(options ClassificationOption) ClassificationResult {
+	docInHam := 0.0
+	docInSpam := 0.0
+
+	for token := range *options.doc {
+		tProb := (*options.classifier)[token]
+
+		if tProb.ham == 0 || tProb.spam == 0 {
+			continue
+		}
+
+		docInHam += math.Log(tProb.ham)
+		docInSpam += math.Log(tProb.spam)
+	}
+
+	return ClassificationResult{
+		ham:  docInHam + math.Log(options.hamProb),
+		spam: docInSpam + math.Log(options.spamProb),
+	}
 }
 
 func main() {
@@ -147,16 +212,26 @@ func main() {
 	spamProb := float64(spamDocs) / float64(totalDocs)
 
 	option := BayesOptions{
-		hamProb:    hamProb,
-		spamProb:   spamProb,
 		hamBoW:     &hamBoW,
 		spamBoW:    &spamBoW,
 		vocabulary: &v,
 	}
 
 	classifier := train(option)
-	for t := range classifier {
-		fmt.Printf("%v => {ham = %v, spam = %v}\n", t, classifier[t].ham, classifier[t].spam)
+	testBoW := BoW{}
+	err = readClassDocument("enron2", "spam", "0026.2001-07-13.SA_and_HP.spam.txt", &testBoW)
+	if err != nil {
+		panic(err)
 	}
 
+	cOption := ClassificationOption{
+		hamProb:    hamProb,
+		spamProb:   spamProb,
+		classifier: &classifier,
+		doc:        &testBoW,
+	}
+
+	r := classify(cOption)
+	fmt.Printf("P(D|ham) = %v\n", r.ham)
+	fmt.Printf("P(D|spam) = %v\n", r.spam)
 }
