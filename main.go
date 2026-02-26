@@ -192,42 +192,48 @@ func classify(options ClassificationOption) ClassificationResult {
 }
 
 func main() {
+	v := Vocabulary{}
+	folders := []string{"enron1", "enron4", "enron5"}
 	hamBoW := BoW{}
 	spamBoW := BoW{}
-	v := Vocabulary{}
-	rootFolder := "enron1"
+	var totalDocs int
+	var totalHamDocs int
+	var totalSpamDocs int
 
-	err := readClassDocuments(rootFolder, "ham", &hamBoW)
-	if err != nil {
-		panic(err)
+	for _, folder := range folders {
+		err := readClassDocuments(folder, "ham", &hamBoW)
+		if err != nil {
+			panic(err)
+		}
+
+		err = readClassDocuments(folder, "spam", &spamBoW)
+		if err != nil {
+			panic(err)
+		}
+
+		createVocabulary(&hamBoW, &v)
+		createVocabulary(&spamBoW, &v)
+		hamDocs := getDocAmount(folder, "ham")
+		spamDocs := getDocAmount(folder, "spam")
+		totalHamDocs += hamDocs
+		totalSpamDocs += spamDocs
 	}
 
-	err = readClassDocuments(rootFolder, "spam", &spamBoW)
-	if err != nil {
-		panic(err)
-	}
-
-	createVocabulary(&hamBoW, &v)
-	createVocabulary(&spamBoW, &v)
-
-	hamDocs := getDocAmount(rootFolder, "ham")
-	spamDocs := getDocAmount(rootFolder, "spam")
-	totalDocs := hamDocs + spamDocs
-
-	hamProb := float64(hamDocs) / float64(totalDocs)
-	spamProb := float64(spamDocs) / float64(totalDocs)
-
+	totalDocs = totalHamDocs + totalSpamDocs
 	option := BayesOptions{
 		hamBoW:     &hamBoW,
 		spamBoW:    &spamBoW,
 		vocabulary: &v,
 	}
 
-	classifier := train(option)
+	model := train(option)
+
+	hamProb := float64(totalHamDocs) / float64(totalDocs)
+	spamProb := float64(totalSpamDocs) / float64(totalDocs)
 	hamTestBoW := BoW{}
 	spamTestBoW := BoW{}
-
 	testRootFolder := "enron2"
+
 	hamFile, dirErr := os.ReadDir(path.Join(testRootFolder, "ham"))
 	if dirErr != nil {
 		panic(dirErr)
@@ -238,7 +244,7 @@ func main() {
 	var fn int
 	var tn int
 	for _, doc := range hamFile {
-		err = readClassDocument(testRootFolder, "ham", doc.Name(), &hamTestBoW)
+		err := readClassDocument(testRootFolder, "ham", doc.Name(), &hamTestBoW)
 		if err != nil {
 			panic(err)
 		}
@@ -246,7 +252,7 @@ func main() {
 		cOption := ClassificationOption{
 			hamProb:    hamProb,
 			spamProb:   spamProb,
-			classifier: &classifier,
+			classifier: &model,
 			doc:        &hamTestBoW,
 		}
 
@@ -264,7 +270,7 @@ func main() {
 	}
 
 	for _, doc := range spamFile {
-		err = readClassDocument(testRootFolder, "spam", doc.Name(), &spamTestBoW)
+		err := readClassDocument(testRootFolder, "spam", doc.Name(), &spamTestBoW)
 		if err != nil {
 			panic(err)
 		}
@@ -272,7 +278,7 @@ func main() {
 		cOption := ClassificationOption{
 			hamProb:    hamProb,
 			spamProb:   spamProb,
-			classifier: &classifier,
+			classifier: &model,
 			doc:        &spamTestBoW,
 		}
 
@@ -285,6 +291,7 @@ func main() {
 	}
 
 	fmt.Printf("True Positive = %v\n", tp)
+	fmt.Printf("True Negative = %v\n", tn)
 	fmt.Printf("False Negative = %v\n", fn)
 	fmt.Printf("False Positive = %v\n", fp)
 	fmt.Printf("Recall = %v\n", float64(tp)/float64(tp+fn))
