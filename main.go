@@ -10,13 +10,9 @@ func main() {
 	folders := []string{"enron1", "enron4"}
 	model := knn.Train(folders)
 	bow := common.BoW{}
+	k := 100
 	common.ReadClassDocument("enron2", "ham", "0020.1999-12-14.kaminski.ham.txt", &bow)
-	res := knn.Fit(model, &bow, 3)
-
-	for _, n := range res {
-		fmt.Printf("Class => %v\n", n.Class)
-		fmt.Printf("Index => %v\n", n.Index)
-		fmt.Printf("Distance => %v\n", n.Distance)
-		fmt.Printf("-------------------\n")
-	}
+	// common.ReadClassDocument("enron2", "spam", "0026.2001-07-13.SA_and_HP.spam.txt", &bow)
+	class := knn.Fit(model, &bow, k)
+	fmt.Printf("Class => %v\n", class)
 }
