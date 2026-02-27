@@ -18,7 +18,7 @@ type KNNModel struct {
 	V      *common.Vocabulary
 }
 
-type NearestPoints struct {
+type Neighbor struct {
 	Distance float64
 	Index    int
 	Class    string
@@ -53,8 +53,8 @@ func Train(folders []string) KNNModel {
 	}
 }
 
-func Fit(model KNNModel, p *common.BoW, k int) []NearestPoints {
-	distances := []NearestPoints{}
+func Fit(model KNNModel, p *common.BoW, k int) string {
+	neighbors := []Neighbor{}
 
 	if k <= 0 {
 		panic("k parameter must be greater than 0")
@@ -62,14 +62,36 @@ func Fit(model KNNModel, p *common.BoW, k int) []NearestPoints {
 
 	for index, q := range model.Points {
 		d := euclideanDistance(p, q.Document, model.V)
-		distances = append(distances, NearestPoints{Distance: d, Index: index, Class: q.Class})
+		neighbors = append(neighbors, Neighbor{Distance: d, Index: index, Class: q.Class})
 	}
 
-	sort.Slice(distances, func(i int, j int) bool {
-		return distances[i].Distance < distances[j].Distance
+	sort.Slice(neighbors, func(i int, j int) bool {
+		return neighbors[i].Distance < neighbors[j].Distance
 	})
 
-	return distances[:k]
+	return vote(neighbors[:k])
+}
+
+func vote(neighbors []Neighbor) string {
+	classes := []string{"ham", "spam"}
+	foundClass := classes[0]
+	maxFrequency := -1
+
+	for _, class := range classes {
+		frequency := 0
+
+		for _, n := range neighbors {
+			if class == n.Class {
+				frequency += 1
+			}
+		}
+
+		if frequency > maxFrequency {
+			foundClass = class
+		}
+	}
+
+	return foundClass
 }
 
 func euclideanDistance(p *common.BoW, q *common.BoW, v *common.Vocabulary) float64 {
