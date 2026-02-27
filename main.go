@@ -1,5 +1,7 @@
 package main
 
-func main() {
+import example "ml/examples"
 
+func main() {
+	example.RunBayes()
 }

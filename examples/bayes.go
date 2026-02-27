@@ -8,7 +8,7 @@ import (
 	"path"
 )
 
-func main() {
+func RunBayes() {
 	v := common.Vocabulary{}
 	folders := []string{"enron1", "enron4", "enron5", "enron6"}
 	hamBoW := common.BoW{}
