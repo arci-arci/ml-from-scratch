@@ -6,6 +6,7 @@ import (
 	"os"
 	"path"
 	"sort"
+	"strings"
 )
 
 type Point struct {
@@ -39,6 +40,10 @@ func Train(folders []string) KNNModel {
 			}
 
 			for _, document := range documents {
+				if strings.ToLower(document.Name()) == "summary.txt" {
+					continue
+				}
+
 				bow := common.BoW{}
 				common.ReadClassDocument(folder, class, document.Name(), &bow)
 				db = append(db, Point{Document: &bow, Class: class})
