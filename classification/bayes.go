@@ -11,10 +11,10 @@ type probabilities struct {
 }
 
 type ClassificationOptions struct {
-	HamProb    float64
-	SpamProb   float64
-	Classifier *bayesClassifier
-	Doc        *common.BoW
+	HamProb  float64
+	SpamProb float64
+	Model    *BayesModel
+	Doc      *common.BoW
 }
 
 type BayesOptions struct {
@@ -28,10 +28,10 @@ type ClassificationResult struct {
 	Spam float64
 }
 
-type bayesClassifier = map[string]probabilities
+type BayesModel = map[string]probabilities
 
-func Train(options BayesOptions) bayesClassifier {
-	classifier := bayesClassifier{}
+func Train(options BayesOptions) BayesModel {
+	classifier := BayesModel{}
 	termsForHam := common.CalcualteTermsAmount(options.HamBoW)
 	termsForSpam := common.CalcualteTermsAmount(options.SpamBoW)
 	vSize := len(*options.Vocabulary)
@@ -56,7 +56,7 @@ func Classify(options ClassificationOptions) ClassificationResult {
 	docInSpam := 0.0
 
 	for token := range *options.Doc {
-		tProb := (*options.Classifier)[token]
+		tProb := (*options.Model)[token]
 
 		// Skipping rare tokens
 		if tProb.ham == 0 || tProb.spam == 0 {

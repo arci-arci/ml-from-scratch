@@ -66,10 +66,10 @@ func main() {
 		}
 
 		cOptions := bayes.ClassificationOptions{
-			HamProb:    hamProb,
-			SpamProb:   spamProb,
-			Classifier: &model,
-			Doc:        &hamTestBoW,
+			HamProb:  hamProb,
+			SpamProb: spamProb,
+			Model:    &model,
+			Doc:      &hamTestBoW,
 		}
 
 		r := bayes.Classify(cOptions)
@@ -93,10 +93,10 @@ func main() {
 		}
 
 		cOptions := bayes.ClassificationOptions{
-			HamProb:    hamProb,
-			SpamProb:   spamProb,
-			Classifier: &model,
-			Doc:        &spamTestBoW,
+			HamProb:  hamProb,
+			SpamProb: spamProb,
+			Model:    &model,
+			Doc:      &spamTestBoW,
 		}
 
 		r := bayes.Classify(cOptions)
