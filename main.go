@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	bayes "ml/classification"
+	bayes "ml/classification/bayes"
 	"ml/common"
 	"os"
 	"path"
