@@ -72,7 +72,7 @@ func main() {
 			Doc:      &hamTestBoW,
 		}
 
-		r := bayes.Classify(cOptions)
+		r := bayes.Fit(cOptions)
 		if r.Ham > r.Spam {
 			tp += 1
 		} else {
