@@ -76,7 +76,7 @@ func ReadClassDocuments(root string, class string, bow *BoW) error {
 			panic(err)
 		}
 
-		content = CleanFileContent(content)
+		content = strings.ToLower(CleanFileContent(content))
 		tokens := strings.FieldsSeq(content)
 
 		for token := range tokens {
