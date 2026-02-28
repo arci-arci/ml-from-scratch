@@ -40,20 +40,11 @@ func CalcualteTermsAmount(bow *BoW) int64 {
 
 func CleanFileContent(content string) string {
 	removableSymbols := []string{
-		"-",
-		"/",
-		";",
-		".",
-		",",
-		"@",
-		"(",
-		")",
-		":",
-		"~",
-		"{",
-		"}",
-		">",
-		"<",
+		"-", "/", ";", ".",
+		",", "@", "(", ")",
+		":", "~", "{", "}",
+		">", "<", "!", "?",
+		"\"", "'",
 	}
 
 	for _, symbol := range removableSymbols {
@@ -105,7 +96,7 @@ func ReadClassDocument(root string, class string, fileName string, bow *BoW) err
 		panic(err)
 	}
 
-	content = CleanFileContent(content)
+	content = strings.ToLower(CleanFileContent(content))
 	tokens := strings.FieldsSeq(content)
 
 	for token := range tokens {
