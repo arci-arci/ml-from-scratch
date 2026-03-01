@@ -10,7 +10,8 @@ import (
 
 func RunBayes() {
 	v := common.Vocabulary{}
-	folders := []string{"enron1", "enron4", "enron5", "enron6"}
+	max := 30
+	folders := []string{"enron1"}
 	hamBoW := common.BoW{}
 	spamBoW := common.BoW{}
 	var totalDocs int
@@ -58,7 +59,7 @@ func RunBayes() {
 	var fn int
 	var tn int
 
-	for _, doc := range hamFile {
+	for _, doc := range hamFile[:max] {
 		hamTestBoW := common.BoW{}
 		err := common.ReadClassDocument(testRootFolder, "ham", doc.Name(), &hamTestBoW)
 		if err != nil {
@@ -85,7 +86,7 @@ func RunBayes() {
 		panic(dirErr)
 	}
 
-	for _, doc := range spamFile {
+	for _, doc := range spamFile[:max] {
 		spamTestBoW := common.BoW{}
 		err := common.ReadClassDocument(testRootFolder, "spam", doc.Name(), &spamTestBoW)
 		if err != nil {
