@@ -10,8 +10,10 @@ import (
 
 func main() {
 	folders := []string{"enron1"}
-	model := knn.Train(folders)
-	k := 10
+	classes := []string{"ham", "spam"}
+	model := knn.Train(folders, classes)
+	k := 100
+
 	documents, err := os.ReadDir(path.Join("enron2", "ham"))
 	if err != nil {
 		panic(err)
@@ -20,10 +22,10 @@ func main() {
 	var tp int
 	var fn int
 
-	for _, doc := range documents {
+	for _, doc := range documents[:2] {
 		bow := common.BoW{}
 		common.ReadClassDocument("enron2", "ham", doc.Name(), &bow)
-		class := knn.Fit(model, &bow, k)
+		class := knn.Fit(&model, &bow, k)
 		fmt.Printf("Document %v Class => %v\n", doc.Name(), class)
 
 		if class == "ham" {
