@@ -143,11 +143,29 @@ func normalize(folders []string, classes []string) ([]NormalizedDocument, Docume
 	return normalizedDocuments, df
 }
 
+func calculateTermFrequency(bow *common.BoW) WeightedBoW {
+	var totalFrequencies int64
+	weightedBoW := WeightedBoW{}
+
+	for token := range *bow {
+		totalFrequencies += (*bow)[token]
+	}
+
+	for token := range *bow {
+		weightedBoW[token] = float64((*bow)[token]) / float64(totalFrequencies)
+	}
+
+	return weightedBoW
+}
+
 func getWeithedBoW(bow *common.BoW, df *DocumentFrequency, size int) WeightedBoW {
 	weightedBoW := WeightedBoW{}
-	for token, tf := range *bow {
-		idf := math.Log2(float64(size) / float64((*df)[token]))
-		weightedBoW[token] = float64(tf) * idf
+	tfBoW := calculateTermFrequency(bow)
+
+	for token, tf := range tfBoW {
+		// In case a term is not present in a document, I add 1 on both of the term
+		idf := math.Log10(float64(1+size) / float64(1+(*df)[token]))
+		weightedBoW[token] = tf * idf
 	}
 
 	return weightedBoW
@@ -197,6 +215,7 @@ func vote(neighbors []Neighbor) string {
 
 		if frequency > maxFrequency {
 			foundClass = class
+			maxFrequency = frequency
 		}
 	}
 
