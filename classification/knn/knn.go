@@ -80,7 +80,7 @@ func Fit(model *KNNModel, p *common.BoW, k int) string {
 	}
 
 	neighbors := []Neighbor{}
-	target := normalizePoint(model, p)
+	target := getWeithedBoW(p, model.df, model.Size)
 
 	for index, q := range model.Points {
 		d := euclideanDistance(&target, q.WBow, model.Vocabulary)
@@ -97,16 +97,6 @@ func Fit(model *KNNModel, p *common.BoW, k int) string {
 	})
 
 	return vote(neighbors[:k])
-}
-
-func normalizePoint(model *KNNModel, p *common.BoW) WeightedBoW {
-	target := WeightedBoW{}
-	for token, tf := range *p {
-		idf := math.Log2(float64(model.Size) / float64((*model.df)[token]))
-		target[token] = float64(tf) * idf
-	}
-
-	return target
 }
 
 func normalize(folders []string, classes []string) ([]NormalizedDocument, DocumentFrequency) {
@@ -140,12 +130,7 @@ func normalize(folders []string, classes []string) ([]NormalizedDocument, Docume
 	}
 
 	for _, info := range documentsData {
-		weightedBoW := WeightedBoW{}
-		for token, tf := range *info.Bow {
-			idf := math.Log2(float64(size) / float64(df[token]))
-			weightedBoW[token] = float64(tf) * idf
-		}
-
+		weightedBoW := getWeithedBoW(info.Bow, &df, size)
 		nDoc := NormalizedDocument{
 			DocumentName: info.DocumentName,
 			Class:        info.Class,
@@ -156,6 +141,16 @@ func normalize(folders []string, classes []string) ([]NormalizedDocument, Docume
 	}
 
 	return normalizedDocuments, df
+}
+
+func getWeithedBoW(bow *common.BoW, df *DocumentFrequency, size int) WeightedBoW {
+	weightedBoW := WeightedBoW{}
+	for token, tf := range *bow {
+		idf := math.Log2(float64(size) / float64((*df)[token]))
+		weightedBoW[token] = float64(tf) * idf
+	}
+
+	return weightedBoW
 }
 
 func getCollectionSize(folders []string, classes []string) (int, error) {
