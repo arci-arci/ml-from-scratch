@@ -46,7 +46,7 @@ func CleanFileContent(content string) string {
 		">", "<", "!", "?",
 		"\"", "'", "+", "-",
 		"*", "\\", "/", "#",
-		"@",
+		"@", "|",
 	}
 
 	for _, symbol := range removableSymbols {
