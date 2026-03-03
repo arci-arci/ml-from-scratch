@@ -39,21 +39,22 @@ func CalcualteTermsAmount(bow *BoW) int64 {
 }
 
 func CleanFileContent(content string) string {
-	removableSymbols := []string{
-		"-", "/", ";", ".",
-		",", "@", "(", ")",
-		":", "~", "{", "}",
-		">", "<", "!", "?",
-		"\"", "'", "+", "-",
-		"*", "\\", "/", "#",
-		"@", "|",
+	var result strings.Builder
+
+	for i := 0; i < len(content); i++ {
+		b := content[i]
+		isLowerCase := 'a' <= b && b <= 'z'
+		isUpperCase := 'A' <= b && b <= 'Z'
+		isDigit := '0' <= b && b <= '9'
+		isWhiteSpace := b == ' '
+
+		if isLowerCase || isUpperCase ||
+			isDigit || isWhiteSpace {
+			result.WriteByte(b)
+		}
 	}
 
-	for _, symbol := range removableSymbols {
-		content = strings.ReplaceAll(content, symbol, "")
-	}
-
-	return content
+	return result.String()
 }
 
 func CreateVocabulary(bow *BoW, v *Vocabulary) {
