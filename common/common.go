@@ -46,8 +46,10 @@ func CleanFileContent(content string) string {
 		isLowerCase := 'a' <= b && b <= 'z'
 		isUpperCase := 'A' <= b && b <= 'Z'
 		isDigit := '0' <= b && b <= '9'
+		isWhiteSpace := b == ' '
 
-		if isLowerCase || isUpperCase || isDigit {
+		if isLowerCase || isUpperCase ||
+			isDigit || isWhiteSpace {
 			result.WriteByte(b)
 		}
 	}
