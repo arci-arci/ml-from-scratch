@@ -45,26 +45,8 @@ type WeightedBoW = map[string]float64
 
 func Train(folders []string, classes []string) KNNModel {
 	db, df := normalize(folders, classes)
-	v := common.Vocabulary{}
-
-	for _, folder := range folders {
-		for _, class := range classes {
-			documents, err := os.ReadDir(path.Join(folder, class))
-			if err != nil {
-				panic(err)
-			}
-
-			for _, document := range documents {
-				if strings.ToLower(document.Name()) == "summary.txt" {
-					continue
-				}
-
-				bow := common.BoW{}
-				common.ReadClassDocument(folder, class, document.Name(), &bow)
-				common.CreateVocabulary(&bow, &v)
-			}
-		}
-	}
+	v := defineVocabulary(folders, classes)
+	_ = CreateBallTree(&v, db)
 
 	return KNNModel{
 		Points:     db,
@@ -83,7 +65,7 @@ func Fit(model *KNNModel, p *common.BoW, k int) string {
 	target := getWeithedBoW(p, model.df, model.Size)
 
 	for index, q := range model.Points {
-		d := euclideanDistance(&target, q.WBow, model.Vocabulary)
+		d := EuclideanDistance(&target, q.WBow, model.Vocabulary)
 		neighbor := Neighbor{
 			Distance: d, Index: index,
 			Class: q.Class, DocumentName: q.DocumentName,
@@ -97,6 +79,20 @@ func Fit(model *KNNModel, p *common.BoW, k int) string {
 	})
 
 	return vote(neighbors[:k])
+}
+
+func defineVocabulary(folders []string, classes []string) common.Vocabulary {
+	v := common.Vocabulary{}
+
+	for _, folder := range folders {
+		for _, class := range classes {
+			bow := common.BoW{}
+			common.ReadClassDocuments(folder, class, &bow)
+			common.CreateVocabulary(&bow, &v)
+		}
+	}
+
+	return common.ClearVocabulary(&v)
 }
 
 func normalize(folders []string, classes []string) ([]NormalizedDocument, DocumentFrequency) {
@@ -222,7 +218,7 @@ func vote(neighbors []Neighbor) string {
 	return foundClass
 }
 
-func euclideanDistance(target *WeightedBoW, q *WeightedBoW, v *common.Vocabulary) float64 {
+func EuclideanDistance(target *WeightedBoW, q *WeightedBoW, v *common.Vocabulary) float64 {
 	var distance float64
 
 	for token := range *v {

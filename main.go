@@ -1,9 +1,9 @@
 package main
 
 import (
-	exaples "ml/examples"
+	example "ml/example"
 )
 
 func main() {
-	exaples.RunBayes()
+	example.RunKNN()
 }

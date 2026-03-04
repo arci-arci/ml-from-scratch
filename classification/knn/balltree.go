@@ -8,7 +8,8 @@ import (
 
 type Ball struct {
 	Pivot  float64
-	Center *NormalizedDocument
+	Center *WeightedBoW
+	Radius float64
 }
 
 type BallNode struct {
@@ -34,13 +35,11 @@ func CreateBallTree(v *common.Vocabulary, points []NormalizedDocument) BallTree 
 }
 
 func createBallTreeRecursive(v *common.Vocabulary, points []NormalizedDocument) BallNode {
-	if len(points) == 0 {
-		return BallNode{}
-	}
-
 	if len(points) == 1 {
+		leafRadius := calculateRadius(points[0].WBow, points, v)
+
 		return BallNode{
-			Ball:  &Ball{Center: &points[0], Pivot: -1},
+			Ball:  &Ball{Center: points[0].WBow, Pivot: -1, Radius: leafRadius},
 			Left:  nil,
 			Right: nil,
 		}
@@ -52,14 +51,19 @@ func createBallTreeRecursive(v *common.Vocabulary, points []NormalizedDocument) 
 		population = append(population, (*point.WBow)[dimension])
 	}
 
-	splittingValue, centerIdx := median(population)
+	// More text preprocessing
+
+	splittingValue := median(population)
+	centroid := findCentroid(v, points)
+	radius := calculateRadius(&centroid, points, v)
+
 	leftPoints := splitPoints(points, dimension, splittingValue, leftFn)
 	rightPoints := splitPoints(points, dimension, splittingValue, rightFn)
 	leftNode := createBallTreeRecursive(v, leftPoints)
 	rightNode := createBallTreeRecursive(v, rightPoints)
 
 	node := BallNode{
-		Ball:  &Ball{Center: &points[centerIdx], Pivot: splittingValue},
+		Ball:  &Ball{Center: nil, Pivot: splittingValue, Radius: radius},
 		Left:  &leftNode,
 		Right: &rightNode,
 	}
@@ -109,6 +113,33 @@ func findDimension(v *common.Vocabulary, points []NormalizedDocument) string {
 	return needle
 }
 
+func findCentroid(v *common.Vocabulary, points []NormalizedDocument) WeightedBoW {
+	centroid := WeightedBoW{}
+
+	for token := range *v {
+		for _, p := range points {
+			centroid[token] += (*p.WBow)[token]
+		}
+	}
+
+	for token := range *v {
+		centroid[token] /= float64(len(points))
+	}
+
+	return centroid
+}
+
+func calculateRadius(centroid *WeightedBoW, points []NormalizedDocument, v *common.Vocabulary) float64 {
+	distances := make([]float64, 0, len(*centroid))
+
+	for _, p := range points {
+		d := EuclideanDistance(centroid, p.WBow, v)
+		distances = append(distances, d)
+	}
+
+	return slices.Max(distances)
+}
+
 func std(population Population, avg float64) float64 {
 	var sum float64
 	for _, v := range population {
@@ -129,16 +160,16 @@ func avg(population Population) float64 {
 	return sum / float64(len(population))
 }
 
-func median(population Population) (float64, int) {
+func median(population Population) float64 {
 	slices.Sort(population)
 
 	if len(population)%2 == 0 {
 		first := (len(population) / 2) - 1
 		second := first + 1
 
-		return (population[first] + population[second]) / 2, first
+		return (population[first] + population[second]) / 2
 	}
 
 	middle := len(population) / 2
-	return population[middle], middle
+	return population[middle]
 }
