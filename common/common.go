@@ -15,6 +15,8 @@ type BoW = map[string]int64
 type Vocabulary = map[string]int64
 
 const MIN_COLLECTION_FREQUENCY int64 = 5
+const MIN_WORD_LEN int = 3
+const AVG_TOKEN_AMOUNT int = 83
 
 func ReadContent(path string) (string, error) {
 	data, err := os.ReadFile(path)
@@ -133,7 +135,7 @@ func fillBoW(tokens iter.Seq[string], bow *BoW) {
 			continue
 		}
 
-		if len(token) <= 3 {
+		if len(token) <= MIN_WORD_LEN {
 			// Skip words with three or less characters
 			continue
 		}

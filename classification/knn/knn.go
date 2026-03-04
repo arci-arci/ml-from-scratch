@@ -119,6 +119,11 @@ func normalize(folders []string, classes []string) ([]NormalizedDocument, Docume
 
 				bow := common.BoW{}
 				common.ReadClassDocument(folder, class, document.Name(), &bow)
+
+				if len(bow) < common.AVG_TOKEN_AMOUNT {
+					continue
+				}
+
 				addToDocFrequency(&df, &bow)
 				documentsData = append(documentsData, DocumentData{DocumentName: document.Name(), Bow: &bow, Class: class})
 			}

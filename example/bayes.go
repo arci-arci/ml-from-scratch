@@ -10,7 +10,7 @@ import (
 
 func RunBayes() {
 	v := common.Vocabulary{}
-	max := 30
+	max := 400
 	folders := []string{"enron1"}
 	hamBoW := common.BoW{}
 	spamBoW := common.BoW{}
