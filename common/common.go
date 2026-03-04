@@ -5,6 +5,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"strconv"
 	"strings"
 )
 
@@ -83,6 +84,10 @@ func ReadClassDocuments(root string, class string, bow *BoW) error {
 		tokens := strings.FieldsSeq(content)
 
 		for token := range tokens {
+			if _, err := strconv.Atoi(token); err == nil {
+				continue
+			}
+
 			(*bow)[token] += 1
 		}
 
@@ -103,6 +108,10 @@ func ReadClassDocument(root string, class string, fileName string, bow *BoW) err
 	tokens := strings.FieldsSeq(content)
 
 	for token := range tokens {
+		if _, err := strconv.Atoi(token); err == nil {
+			continue
+		}
+
 		(*bow)[token] += 1
 	}
 
