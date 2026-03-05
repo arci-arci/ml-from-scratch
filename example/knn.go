@@ -12,8 +12,8 @@ func RunKNN() {
 	folders := []string{"enron1"}
 	classes := []string{"ham", "spam"}
 	model := knn.Train(folders, classes)
-	k := 100
-	max := 30
+	k := 8
+	max := 50
 
 	testDoc := "enron2"
 	testClass := "ham"
@@ -30,7 +30,7 @@ func RunKNN() {
 		bow := common.BoW{}
 		common.ReadClassDocument(testDoc, testClass, doc.Name(), &bow)
 		class := knn.Fit(&model, &bow, k)
-		fmt.Printf("Document %v Class => %v\n", doc.Name(), class)
+		fmt.Printf("  %v => %v\n", doc.Name(), class)
 
 		if class == testClass {
 			tp += 1
@@ -52,7 +52,7 @@ func RunKNN() {
 		bow := common.BoW{}
 		common.ReadClassDocument(testDoc, testClass, doc.Name(), &bow)
 		class := knn.Fit(&model, &bow, k)
-		fmt.Printf("Document %v Class => %v\n", doc.Name(), class)
+		fmt.Printf("  %v => %v\n", doc.Name(), class)
 
 		if class == testClass {
 			tn += 1
@@ -61,7 +61,7 @@ func RunKNN() {
 		}
 	}
 
-	fmt.Printf("Test set size 'ham' = %v\n", len(hamFile))
+	fmt.Printf("\nTest set size 'ham' = %v\n", len(hamFile))
 	fmt.Printf("Test set size 'spam' = %v\n", len(spamFile))
 	fmt.Printf("True Positive = %v\n", tp)
 	fmt.Printf("True Negative = %v\n", tn)

@@ -9,12 +9,12 @@ import (
 	"slices"
 	"strconv"
 	"strings"
+	"unicode"
 )
 
 type BoW = map[string]int64
 type Vocabulary = map[string]int64
 
-const MIN_COLLECTION_FREQUENCY int64 = 5
 const MIN_WORD_LEN int = 3
 const AVG_TOKEN_AMOUNT int = 83
 
@@ -48,16 +48,10 @@ func CalcualteTermsAmount(bow *BoW) int64 {
 func CleanFileContent(content string) string {
 	var result strings.Builder
 
-	for i := 0; i < len(content); i++ {
-		b := content[i]
-		isLowerCase := 'a' <= b && b <= 'z'
-		isUpperCase := 'A' <= b && b <= 'Z'
-		isDigit := '0' <= b && b <= '9'
-		isWhiteSpace := b == ' '
-
-		if isLowerCase || isUpperCase ||
-			isDigit || isWhiteSpace {
-			result.WriteByte(b)
+	for _, r := range content {
+		if unicode.IsLower(r) || unicode.IsUpper(r) ||
+			unicode.IsNumber(r) || unicode.IsSpace(r) {
+			result.WriteRune(r)
 		}
 	}
 
@@ -68,21 +62,6 @@ func CreateVocabulary(bow *BoW, v *Vocabulary) {
 	for t := range *bow {
 		(*v)[t] += (*bow)[t]
 	}
-}
-
-func ClearVocabulary(v *Vocabulary) Vocabulary {
-	newV := Vocabulary{}
-	for t := range *v {
-		collectionFreq := (*v)[t]
-
-		if collectionFreq < MIN_COLLECTION_FREQUENCY {
-			continue
-		}
-
-		newV[t] = collectionFreq
-	}
-
-	return newV
 }
 
 func ReadClassDocuments(root string, class string, bow *BoW) error {

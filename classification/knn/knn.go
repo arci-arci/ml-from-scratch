@@ -44,9 +44,9 @@ type DocumentFrequency = map[string]int
 type WeightedBoW = map[string]float64
 
 func Train(folders []string, classes []string) KNNModel {
+	v := common.Vocabulary{}
 	db, df := normalize(folders, classes)
-	v := defineVocabulary(folders, classes)
-	_ = CreateBallTree(&v, db)
+	defineVocabulary(folders, classes, &v)
 
 	return KNNModel{
 		Points:     db,
@@ -65,7 +65,7 @@ func Fit(model *KNNModel, p *common.BoW, k int) string {
 	target := getWeithedBoW(p, model.df, model.Size)
 
 	for index, q := range model.Points {
-		d := EuclideanDistance(&target, q.WBow, model.Vocabulary)
+		d := cosineSimilarity(&target, q.WBow, model.Vocabulary)
 		neighbor := Neighbor{
 			Distance: d, Index: index,
 			Class: q.Class, DocumentName: q.DocumentName,
@@ -75,24 +75,21 @@ func Fit(model *KNNModel, p *common.BoW, k int) string {
 	}
 
 	sort.Slice(neighbors, func(i int, j int) bool {
-		return neighbors[i].Distance < neighbors[j].Distance
+		return neighbors[i].Distance > neighbors[j].Distance
 	})
 
 	return vote(neighbors[:k])
 }
 
-func defineVocabulary(folders []string, classes []string) common.Vocabulary {
-	v := common.Vocabulary{}
+func defineVocabulary(folders []string, classes []string, v *common.Vocabulary) {
 
 	for _, folder := range folders {
 		for _, class := range classes {
 			bow := common.BoW{}
 			common.ReadClassDocuments(folder, class, &bow)
-			common.CreateVocabulary(&bow, &v)
+			common.CreateVocabulary(&bow, v)
 		}
 	}
-
-	return common.ClearVocabulary(&v)
 }
 
 func normalize(folders []string, classes []string) ([]NormalizedDocument, DocumentFrequency) {
@@ -146,17 +143,17 @@ func normalize(folders []string, classes []string) ([]NormalizedDocument, Docume
 
 func calculateTermFrequency(bow *common.BoW) WeightedBoW {
 	var totalFrequencies int64
-	weightedBoW := WeightedBoW{}
+	tfBoW := WeightedBoW{}
 
 	for token := range *bow {
 		totalFrequencies += (*bow)[token]
 	}
 
 	for token := range *bow {
-		weightedBoW[token] = float64((*bow)[token]) / float64(totalFrequencies)
+		tfBoW[token] = float64((*bow)[token]) / float64(totalFrequencies)
 	}
 
-	return weightedBoW
+	return tfBoW
 }
 
 func getWeithedBoW(bow *common.BoW, df *DocumentFrequency, size int) WeightedBoW {
@@ -223,15 +220,34 @@ func vote(neighbors []Neighbor) string {
 	return foundClass
 }
 
-func EuclideanDistance(target *WeightedBoW, q *WeightedBoW, v *common.Vocabulary) float64 {
-	var distance float64
+func cosineSimilarity(target *WeightedBoW, q *WeightedBoW, v *common.Vocabulary) float64 {
+	targetLen := magnitude(target, v)
+	pointLen := magnitude(q, v)
+	product := dot(target, q, v)
+	distance := product / (targetLen * pointLen)
+
+	return distance
+}
+
+func dot(target *WeightedBoW, q *WeightedBoW, v *common.Vocabulary) float64 {
+	var sum float64
 
 	for token := range *v {
-		x := (*target)[token]
-		y := (*q)[token]
-		squareValue := math.Pow(float64(x-y), 2)
-		distance += squareValue
+		targetV := (*target)[token]
+		pointV := (*q)[token]
+		sum = sum + (targetV * pointV)
 	}
 
-	return math.Sqrt(distance)
+	return sum
+}
+
+func magnitude(vector *WeightedBoW, v *common.Vocabulary) float64 {
+	var sum float64
+
+	for token := range *v {
+		val := (*vector)[token]
+		sum += math.Pow(val, 2)
+	}
+
+	return math.Sqrt(sum)
 }
