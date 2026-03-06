@@ -6,4 +6,5 @@ import (
 
 func main() {
 	example.RunKNN()
+	// example.RunBayes()
 }

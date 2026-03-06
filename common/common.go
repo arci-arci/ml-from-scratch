@@ -13,6 +13,7 @@ import (
 )
 
 type BoW = map[string]int64
+type WeightedBoW = map[string]float64
 type Vocabulary = map[string]int64
 
 const MIN_WORD_LEN int = 3
@@ -60,7 +61,13 @@ func CleanFileContent(content string) string {
 
 func CreateVocabulary(bow *BoW, v *Vocabulary) {
 	for t := range *bow {
-		(*v)[t] += (*bow)[t]
+		(*v)[t] = 1
+	}
+}
+
+func CreateWeightedVocabulary(wBoW *WeightedBoW, v *Vocabulary) {
+	for t := range *wBoW {
+		(*v)[t] = 1
 	}
 }
 
