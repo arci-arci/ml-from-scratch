@@ -26,6 +26,7 @@ func RunKNN() {
 	var fn int
 
 	fmt.Println("Working on 'ham' class")
+
 	for _, doc := range hamFile[:max] {
 		bow := common.BoW{}
 		common.ReadClassDocument(testDoc, testClass, doc.Name(), &bow)
@@ -61,8 +62,8 @@ func RunKNN() {
 		}
 	}
 
-	fmt.Printf("\nTest set size 'ham' = %v\n", len(hamFile))
-	fmt.Printf("Test set size 'spam' = %v\n", len(spamFile))
+	fmt.Printf("\nTest set size 'ham' = %v\n", max)
+	fmt.Printf("Test set size 'spam' = %v\n", max)
 	fmt.Printf("True Positive = %v\n", tp)
 	fmt.Printf("True Negative = %v\n", tn)
 	fmt.Printf("False Negative = %v\n", fn)

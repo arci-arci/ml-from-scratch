@@ -108,8 +108,8 @@ func RunBayes() {
 		}
 	}
 
-	fmt.Printf("Test set size 'ham' = %v\n", len(hamFile))
-	fmt.Printf("Test set size 'spam' = %v\n", len(spamFile))
+	fmt.Printf("Test set size 'ham' = %v\n", max)
+	fmt.Printf("Test set size 'spam' = %v\n", max)
 	fmt.Printf("True Positive = %v\n", tp)
 	fmt.Printf("True Negative = %v\n", tn)
 	fmt.Printf("False Negative = %v\n", fn)
