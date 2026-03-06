@@ -59,6 +59,7 @@ func RunBayes() {
 	var fn int
 	var tn int
 
+	fmt.Println("Working on 'ham' class")
 	for _, doc := range hamFile[:max] {
 		hamTestBoW := common.BoW{}
 		err := common.ReadClassDocument(testRootFolder, "ham", doc.Name(), &hamTestBoW)
@@ -81,6 +82,7 @@ func RunBayes() {
 		}
 	}
 
+	fmt.Println("Working on 'spam' class")
 	spamFile, dirErr := os.ReadDir(path.Join(testRootFolder, "spam"))
 	if dirErr != nil {
 		panic(dirErr)
