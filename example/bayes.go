@@ -74,7 +74,7 @@ func RunBayes() {
 			Doc:      &hamTestBoW,
 		}
 
-		r := bayes.Fit(cOptions)
+		r := bayes.Predict(cOptions)
 		if r.Ham > r.Spam {
 			tp += 1
 		} else {
@@ -102,7 +102,7 @@ func RunBayes() {
 			Doc:      &spamTestBoW,
 		}
 
-		r := bayes.Fit(cOptions)
+		r := bayes.Predict(cOptions)
 		if r.Spam > r.Ham {
 			tn += 1
 		} else {

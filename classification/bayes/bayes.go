@@ -51,7 +51,7 @@ func Train(options BayesOptions) BayesModel {
 	return classifier
 }
 
-func Fit(options ClassificationOptions) ClassificationResult {
+func Predict(options ClassificationOptions) ClassificationResult {
 	docInHam := 0.0
 	docInSpam := 0.0
 
