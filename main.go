@@ -1,10 +1,7 @@
 package main
 
-import (
-	example "ml/example"
-)
+import "ml/example"
 
 func main() {
-	example.RunKNN()
-	// example.RunBayes()
+	example.RunDecisionTree()
 }
