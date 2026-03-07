@@ -37,6 +37,22 @@ func GetDocAmount(root string, class string) int {
 	return len(docs)
 }
 
+func GetCollectionSize(folders []string, classes []string) (int, error) {
+	size := 0
+	for _, folder := range folders {
+		for _, class := range classes {
+			documents, err := os.ReadDir(path.Join(folder, class))
+			if err != nil {
+				return -1, err
+			}
+
+			size += len(documents)
+		}
+	}
+
+	return size, nil
+}
+
 func CalcualteTermsAmount(bow *BoW) int64 {
 	var total int64
 	for t := range *bow {

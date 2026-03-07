@@ -87,7 +87,7 @@ func defineVocabulary(db []NormalizedDocument, v *common.Vocabulary) {
 }
 
 func normalize(folders []string, classes []string) ([]NormalizedDocument, DocumentFrequency) {
-	size, err := getCollectionSize(folders, classes)
+	size, err := common.GetCollectionSize(folders, classes)
 	df := DocumentFrequency{}
 	documentsData := make([]DocumentData, 0, size)
 	normalizedDocuments := make([]NormalizedDocument, 0, size)
@@ -161,22 +161,6 @@ func getWeithedBoW(bow *common.BoW, df *DocumentFrequency, size int) common.Weig
 	}
 
 	return weightedBoW
-}
-
-func getCollectionSize(folders []string, classes []string) (int, error) {
-	size := 0
-	for _, folder := range folders {
-		for _, class := range classes {
-			documents, err := os.ReadDir(path.Join(folder, class))
-			if err != nil {
-				return -1, err
-			}
-
-			size += len(documents)
-		}
-	}
-
-	return size, nil
 }
 
 func addToDocFrequency(df *DocumentFrequency, bow *common.BoW) {
