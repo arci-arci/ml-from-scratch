@@ -9,7 +9,7 @@ A simple repository created with the idea of learning Go and Machine Learning by
   - A future implementation: [Ball Tree](https://web.archive.org/web/20251219030314/https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=17ac002939f8e950ffb32ec4dc8e86bdd8cb5ff1), [Wikipedia](https://en.wikipedia.org/wiki/Ball_tree)
 - Decision Tree
   - Implemented using [ID3 Algorithm](https://en.wikipedia.org/wiki/ID3_algorithm)
-- Linear Classification
+- Linear Regression
 
 ### Unsupervised Machine Learning
 
@@ -18,4 +18,5 @@ A simple repository created with the idea of learning Go and Machine Learning by
 
 ### Dataset
 
-Dataset used for classification: [Enron Spam](https://www2.aueb.gr/users/ion/data/enron-spam/)
+- Dataset used for classification: [Enron Spam](https://www2.aueb.gr/users/ion/data/enron-spam/)
+- Dataset used for regression: [Wine recognition dataset](https://archive.ics.uci.edu/ml/machine-learning-databases/wine/wine.data)
