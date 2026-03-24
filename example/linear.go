@@ -58,6 +58,7 @@ func RunLinearRegression() {
 
 }
 
+// Test correlation
 func Correlation(x, y []float64) float64 {
 	n := float64(len(x))
 	meanX, meanY := 0.0, 0.0
