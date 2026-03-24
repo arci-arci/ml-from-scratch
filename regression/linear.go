@@ -44,7 +44,7 @@ type StandardScaler struct {
 
 func Train(options LinearRegressionOpt) LinearRegressionModel {
 	batches := int(math.Floor(float64(len(options.Train)) / float64(options.BatchSize)))
-	fmt.Printf("Epochs amount: %v\n", batches)
+	fmt.Printf("Batch amount for each epoch: %v\n", batches)
 
 	// Adding 1 so I can take into account the intercept
 	Xs := addIntercept(options.InputFeature)
@@ -55,8 +55,6 @@ func Train(options LinearRegressionOpt) LinearRegressionModel {
 	currentEpoch := 1
 
 	for currentEpoch <= options.Epochs {
-		fmt.Printf("Current epoch: %v\n", currentEpoch)
-
 		rand.Shuffle(options.BatchSize, func(i, j int) {
 			options.Train[i], options.Train[j] = options.Train[j], options.Train[i]
 		})

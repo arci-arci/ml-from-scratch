@@ -9,8 +9,8 @@ import (
 func RunLinearRegression() {
 	dataset := linear.ReadCSV()
 	distribution := linear.Distribution{
-		Train: 0.7,
-		Test:  0.3,
+		Train: 0.85,
+		Test:  0.15,
 	}
 	seed := linear.Seed{
 		FirstSeed: 42,
@@ -54,7 +54,7 @@ func RunLinearRegression() {
 	}
 
 	fmt.Print("\n\n------- MAE -------\n\n")
-	fmt.Printf("MAE: %v", linear.Mae(predictions, trueValues))
+	fmt.Printf("MAE: %v\n\n", linear.Mae(predictions, trueValues))
 
 }
 
