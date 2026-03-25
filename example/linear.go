@@ -38,7 +38,7 @@ func RunLinearRegression() {
 		LearningRate: 0.0002,
 		InputFeature: []int{6, 11, 12},
 		Target:       target,
-		BatchSize:    1,
+		BatchSize:    30,
 		Alpha:        0.5,
 		Epochs:       550,
 	}
