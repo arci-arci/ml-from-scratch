@@ -13,6 +13,8 @@ type Pixel struct {
 	B int
 }
 
+const conversionUnit uint32 = 257
+
 func GetPixelFromImage(path string) ([][]Pixel, error) {
 	image.RegisterFormat("png", "png", png.Decode, png.DecodeConfig)
 	file, err := os.Open(path)
@@ -57,9 +59,16 @@ func getPixels(file io.Reader) ([][]Pixel, error) {
 }
 
 func rgbaToPixel(r uint32, g uint32, b uint32) Pixel {
+	// Because we are dealing with 16-bit alpha-premultiplied color
+	// in the range [0, 65535], we convert each compoent's value to a
+	// 8-bit alpha-premultiplied color in the range [0, 255]
+	// by dividing each component by 0x101 (257)
+	//
+	// https://go.dev/blog/image#colors-and-color-models
+
 	return Pixel{
-		R: int(r / 257),
-		G: int(g / 257),
-		B: int(b / 257),
+		R: int(r / conversionUnit),
+		G: int(g / conversionUnit),
+		B: int(b / conversionUnit),
 	}
 }
