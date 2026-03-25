@@ -25,4 +25,4 @@ A simple repository created with the idea of learning Go and Machine Learning by
 - Dataset used for classification: [Enron Spam](https://www2.aueb.gr/users/ion/data/enron-spam/)
 - Dataset used for regression: [Wine recognition dataset](https://archive.ics.uci.edu/ml/machine-learning-databases/wine/wine.data)
 
-The data used during clustering is the output of the [Run-length encoding algorith](https://en.wikipedia.org/wiki/Run-length_encoding) over the entire Frankenstein book's first chapter.
+The data used during clustering is the output of the [Run-length encoding algorith](https://en.wikipedia.org/wiki/Run-length_encoding) over the entire Frankenstein book's first chapter. [Project Gutenberg](https://www.gutenberg.org/).
