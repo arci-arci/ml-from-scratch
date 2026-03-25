@@ -10,6 +10,10 @@ A simple repository created with the idea of learning Go and Machine Learning by
 - Decision Tree
   - Implemented using [ID3 Algorithm](https://en.wikipedia.org/wiki/ID3_algorithm)
 - Linear Regression
+  - implementation based on [Artificial Intelligence: foundations of computational agents](https://artint.info/3e/html/ArtInt3e.Ch7.S3.html) algorithm;
+  - Implemented using stochastic gradient descent;
+  - Mean Squared Loss as my loss function;
+  - Added a Regularization Term using L2 norm;
 
 ### Unsupervised Machine Learning
 
