@@ -30,7 +30,7 @@ func RunKNN() {
 	for _, doc := range hamFile[:max] {
 		bow := common.BoW{}
 		common.ReadClassDocument(testDoc, testClass, doc.Name(), &bow)
-		class := knn.Predict(&model, &bow, k)
+		class := knn.Fit(&model, &bow, k)
 		fmt.Printf("  %v => %v\n", doc.Name(), class)
 
 		if class == testClass {
@@ -52,7 +52,7 @@ func RunKNN() {
 	for _, doc := range spamFile[:max] {
 		bow := common.BoW{}
 		common.ReadClassDocument(testDoc, testClass, doc.Name(), &bow)
-		class := knn.Predict(&model, &bow, k)
+		class := knn.Fit(&model, &bow, k)
 		fmt.Printf("  %v => %v\n", doc.Name(), class)
 
 		if class == testClass {

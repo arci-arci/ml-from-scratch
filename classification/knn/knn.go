@@ -55,7 +55,7 @@ func Train(folders []string, classes []string) KNNModel {
 	}
 }
 
-func Predict(model *KNNModel, p *common.BoW, k int) string {
+func Fit(model *KNNModel, p *common.BoW, k int) string {
 	if k <= 0 {
 		panic("k parameter must be greater than 0")
 	}

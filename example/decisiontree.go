@@ -29,7 +29,7 @@ func RunDecisionTree() {
 	for _, doc := range hamFile[:max] {
 		bow := common.BoW{}
 		common.ReadClassDocument(testDoc, testClass, doc.Name(), &bow)
-		predictedClass, _ := decisiontree.Predict(&model, &bow)
+		predictedClass, _ := decisiontree.Fit(&model, &bow)
 
 		if predictedClass == testClass {
 			tp += 1
@@ -50,7 +50,7 @@ func RunDecisionTree() {
 	for _, doc := range spamFile[:max] {
 		bow := common.BoW{}
 		common.ReadClassDocument(testDoc, testClass, doc.Name(), &bow)
-		predictedClass, _ := decisiontree.Predict(&model, &bow)
+		predictedClass, _ := decisiontree.Fit(&model, &bow)
 
 		if predictedClass == testClass {
 			tn += 1

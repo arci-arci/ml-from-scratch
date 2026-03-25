@@ -50,11 +50,11 @@ func Train(folders []string, classes []string) DecisionTree {
 	return tree
 }
 
-func Predict(model *DecisionTree, target *common.BoW) (string, ClassDistribution) {
-	return runPredict(model.Root, target)
+func Fit(model *DecisionTree, target *common.BoW) (string, ClassDistribution) {
+	return runFit(model.Root, target)
 }
 
-func runPredict(root *Node, target *common.BoW) (string, ClassDistribution) {
+func runFit(root *Node, target *common.BoW) (string, ClassDistribution) {
 	stack := []*Node{root}
 	distributions := ClassDistribution{}
 	var class string
