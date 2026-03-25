@@ -66,7 +66,7 @@ func Train(options LinearRegressionOpt) LinearRegressionModel {
 			for _, e := range batch {
 				// Adding X0 value
 				example := append([]float64{1.0}, e...)
-				err := 0.5 * math.Pow(prediction(example, weights, Xs)-example[options.Target+1], 2)
+				err := prediction(example, weights, Xs) - example[options.Target+1]
 
 				for i, idx := range Xs {
 					batchWeights[i] = batchWeights[i] + err*example[idx]
@@ -203,6 +203,10 @@ func SplitDataset(dataset CSVData, dist Distribution, seed Seed) (trainSet, test
 	source := rand.NewPCG(seed.FirstSeed, seed.SeconSeed)
 	randGen := rand.New(source)
 
+	rand.Shuffle(len(dataset), func(i, j int) {
+		dataset[i], dataset[j] = dataset[j], dataset[i]
+	})
+
 	total := len(dataset)
 	acc := make([]int, 0, total)
 	trainSize := int(math.Floor(float64(total) * dist.Train))
@@ -228,14 +232,14 @@ func SplitDataset(dataset CSVData, dist Distribution, seed Seed) (trainSet, test
 	return trainSet, testSet
 }
 
-func GetTarget(train CSVData, target int) []float64 {
-	yTrain := make([]float64, len(train))
+func GetFeatureValues(train CSVData, feature int) []float64 {
+	values := make([]float64, len(train))
 
 	for i, row := range train {
-		yTrain[i] = row[target]
+		values[i] = row[feature]
 	}
 
-	return yTrain
+	return values
 }
 
 func generate(size int, total int, randGen *rand.Rand, acc []int) (elements, accR []int) {
