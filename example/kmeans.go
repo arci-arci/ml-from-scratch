@@ -2,6 +2,7 @@ package example
 
 import (
 	"fmt"
+	"ml/clustering"
 	"ml/common/imgreader"
 )
 
@@ -13,5 +14,13 @@ func RunKMeans() {
 		panic(err)
 	}
 
-	fmt.Println(pixel)
+	options := clustering.KMeansOptions{
+		Dataset:   pixel,
+		K:         16,
+		Threshold: 0.02,
+	}
+
+	clusters, iteration := clustering.KMeans(options)
+	fmt.Println("Iterations: ", iteration)
+	clustering.PrintClusters(clusters, 50)
 }
