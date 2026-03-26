@@ -13,3 +13,4 @@ logs/
 
 # Virtual environments
 .venv
+chart/output/
