@@ -22,6 +22,5 @@ func RunKMeans() {
 
 	clusters, iteration := clustering.KMeans(options)
 	fmt.Println("Iterations: ", iteration)
-	// clustering.PrintClusters(clusters, 50)
 	clustering.Save(clusters, "chart/output/cluster.csv")
 }
