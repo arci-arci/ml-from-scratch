@@ -1,0 +1,13 @@
+{
+  "include": ["src", "test"],
+  "extraPaths": ["src"],
+  "venvPath": ".",
+  "venv": ".venv",
+  "reportMissingImports": "error",
+  "typeCheckingMode": "standard",
+  "reportUnusedImport": true,
+  "reportUnusedClass": true,
+  "reportUnusedFunction": true,
+  "reportUnusedVariable": true,
+  "reportPrivateUsage": "error"
+}
