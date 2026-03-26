@@ -112,8 +112,6 @@ func Save(clusters []Cluster, path string) {
 
 }
 
-// cr, cg, cb, ca, ir, ig, ib, ia
-
 func nextClusters(clusters []Cluster) []Cluster {
 	newClusters := make([]Cluster, 0, len(clusters))
 
