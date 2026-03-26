@@ -1,2 +1,15 @@
 enron*
 images
+
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+logs/
+.env
+
+# Virtual environments
+.venv

@@ -22,6 +22,8 @@ A simple repository created with the idea of learning Go and Machine Learning by
   - Implemented using Lloyd's algorithm;
 - DBSCAN
 
+I use Python as a visualization tool for clusters.
+
 ### Dataset
 
 - Dataset used for classification: [Enron Spam](https://www2.aueb.gr/users/ion/data/enron-spam/)
