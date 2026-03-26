@@ -1,6 +1,6 @@
 A simple repository created with the idea of learning Go and Machine Learning by creating from scrath different type of ML algorithms, rangin from supervised and unsupervised ML.
 
-### Supervised Machine Learning
+## Supervised Machine Learning
 
 - Naive Bayes classifier
   - Implemented using [Multinomial Naive Bayes](https://scikit-learn.org/stable/modules/naive_bayes.html#multinomial-naive-bayes) with smoothing priors equal to 1
@@ -15,7 +15,7 @@ A simple repository created with the idea of learning Go and Machine Learning by
   - Mean Squared Loss as my loss function;
   - Added a Regularization Term using L2 norm;
 
-### Unsupervised Machine Learning
+## Unsupervised Machine Learning
 
 - K-Means
   - Implemented Forgy method as initialization methods;
@@ -24,7 +24,21 @@ A simple repository created with the idea of learning Go and Machine Learning by
 
 I use Python as a visualization tool for clusters.
 
-### Dataset
+### Kmeans result
+
+**Original image**
+
+![orignal-image](images/image.png)
+
+**RGBA Distribution**
+
+![rgma-dist](images/color-distribution.png)
+
+**Cluster visualization**
+
+![clusters](images/clusters.png)
+
+## Dataset
 
 - Dataset used for classification: [Enron Spam](https://www2.aueb.gr/users/ion/data/enron-spam/)
 - Dataset used for regression: [Wine recognition dataset](https://archive.ics.uci.edu/ml/machine-learning-databases/wine/wine.data)
