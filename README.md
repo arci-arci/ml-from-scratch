@@ -18,8 +18,8 @@ A simple repository created with the idea of learning Go and Machine Learning by
 ## Unsupervised Machine Learning
 
 - K-Means
+  - Implemented using [Lloyd's algorithm](https://en.wikipedia.org/wiki/K-means_clustering);
   - Implemented Forgy method as initialization methods;
-  - Implemented using Lloyd's algorithm;
 - DBSCAN
 
 I use Python as a visualization tool for clusters.
