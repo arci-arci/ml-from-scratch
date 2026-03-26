@@ -18,6 +18,8 @@ A simple repository created with the idea of learning Go and Machine Learning by
 ### Unsupervised Machine Learning
 
 - K-Means
+  - Implemented Forgy method as initialization methods;
+  - Implemented using Lloyd's algorithm;
 - DBSCAN
 
 ### Dataset
