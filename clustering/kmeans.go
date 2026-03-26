@@ -1,11 +1,14 @@
 package clustering
 
 import (
+	"encoding/csv"
 	"fmt"
 	"math"
 	"math/rand/v2"
 	"ml/common/imgreader"
+	"os"
 	"slices"
+	"strconv"
 )
 
 type Cluster struct {
@@ -69,6 +72,47 @@ func PrintClusters(clusters []Cluster, limit int) {
 		fmt.Printf("-----------------------------\n")
 	}
 }
+
+func Save(clusters []Cluster, path string) {
+	file, err := os.Create(path)
+
+	if err != nil {
+		panic(err)
+	}
+
+	defer file.Close()
+
+	writer := csv.NewWriter(file)
+	defer writer.Flush()
+
+	for _, c := range clusters {
+		clusterData := []string{
+			strconv.FormatInt(int64(c.Centroide.R), 10),
+			strconv.FormatInt(int64(c.Centroide.G), 10),
+			strconv.FormatInt(int64(c.Centroide.B), 10),
+			strconv.FormatInt(int64(c.Centroide.A), 10),
+		}
+
+		for _, item := range c.Items {
+			itemData := []string{
+				strconv.FormatInt(int64(item.R), 10),
+				strconv.FormatInt(int64(item.G), 10),
+				strconv.FormatInt(int64(item.B), 10),
+				strconv.FormatInt(int64(item.A), 10),
+			}
+
+			record := append(clusterData, itemData...)
+			err := writer.Write(record)
+			if err != nil {
+				panic(err)
+			}
+		}
+
+	}
+
+}
+
+// cr, cg, cb, ca, ir, ig, ib, ia
 
 func nextClusters(clusters []Cluster) []Cluster {
 	newClusters := make([]Cluster, 0, len(clusters))
