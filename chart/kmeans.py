@@ -73,9 +73,11 @@ if __name__ == "__main__":
     cx, cy, x, y = convert(data)
     
     fig, ax = plt.subplots()
-    ax.set_title("KMeans Segmentation")
+    ax.set_title("K-Means Segmentation")
     ax.set_xlabel("Red")
     ax.set_ylabel("Green")
+
+    ax.text(0, 200, r'$k=16$')
 
     for k, color in list(zip(range(len(cx)), COLORS)):
         ax.scatter(x[k], y[k], s=1.5, linewidths=0, c=color)
