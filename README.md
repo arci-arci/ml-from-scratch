@@ -24,8 +24,6 @@ A simple repository created with the idea of learning Go and Machine Learning by
 
 I use Python as a visualization tool for clusters.
 
-### Kmeans result
-
 **Original image**
 
 ![orignal-image](images/image.png)
@@ -34,12 +32,22 @@ I use Python as a visualization tool for clusters.
 
 ![rgma-dist](images/color-distribution.png)
 
+### K-Means result
+
 **Cluster visualization**
 
 ![clusters](images/clusters.png)
+
+### DBSCAN Result
+
+**Note:** the original image was scaled down to a resolution of 100x96 because of too many pixels in the original image.
+
+![dbscan-res-1](images/dbscan-1.png)
+
+![dbscan-res-2](images/dbscan-2.png)
 
 ## Dataset
 
 - Dataset used for classification: [Enron Spam](https://www2.aueb.gr/users/ion/data/enron-spam/)
 - Dataset used for regression: [Wine recognition dataset](https://archive.ics.uci.edu/ml/machine-learning-databases/wine/wine.data)
-- The data used during clustering are the RGB values of an [image](https://en.wikipedia.org/wiki/K-means_clustering#/media/File:Rosa_Gold_Glow_2_small_noblue.png) with the purpose of segment an image into groups that represent a distint color in the image.
+- The data used during clustering are the RGB values of the following image [image](https://en.wikipedia.org/wiki/K-means_clustering#/media/File:Rosa_Gold_Glow_2_small_noblue.png).
