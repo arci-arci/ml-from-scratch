@@ -39,7 +39,7 @@ type DecisionTree struct {
 type ClassDistribution = map[string]float64
 
 const MAX_DEPTH int = 25
-const MIN_SAMPLE_SPLIT int = 5
+const MIN_SAMPLE_SPLIT int = 100
 
 func Train(folders []string, classes []string) DecisionTree {
 	v := common.Vocabulary{}
