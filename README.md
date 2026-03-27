@@ -21,6 +21,7 @@ A simple repository created with the idea of learning Go and Machine Learning by
   - Implemented using [Lloyd's algorithm](https://en.wikipedia.org/wiki/K-means_clustering);
   - Implemented Forgy method as initialization methods;
 - DBSCAN
+  - Implemented with the following algorithm: [Wikipedia](https://en.wikipedia.org/wiki/DBSCAN)
 
 I use Python as a visualization tool for clusters.
 
