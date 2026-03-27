@@ -9,11 +9,10 @@ import (
 )
 
 func RunKNN() {
-	folders := []string{"enron1"}
+	folders := []string{"enron1", "enron3", "enron5"}
 	classes := []string{"ham", "spam"}
 	model := knn.Train(folders, classes)
-	k := 8
-	max := 50
+	k := 16
 
 	testDoc := "enron2"
 	testClass := "ham"
@@ -27,7 +26,8 @@ func RunKNN() {
 
 	fmt.Println("Working on 'ham' class")
 
-	for _, doc := range hamFile[:max] {
+	maxHam := len(hamFile)
+	for _, doc := range hamFile[:maxHam] {
 		bow := common.BoW{}
 		common.ReadClassDocument(testDoc, testClass, doc.Name(), &bow)
 		class := knn.Fit(&model, &bow, k)
@@ -49,7 +49,8 @@ func RunKNN() {
 		panic(err)
 	}
 
-	for _, doc := range spamFile[:max] {
+	maxSpam := len(spamFile)
+	for _, doc := range spamFile[:maxSpam] {
 		bow := common.BoW{}
 		common.ReadClassDocument(testDoc, testClass, doc.Name(), &bow)
 		class := knn.Fit(&model, &bow, k)
@@ -62,8 +63,8 @@ func RunKNN() {
 		}
 	}
 
-	fmt.Printf("\nTest set size 'ham' = %v\n", max)
-	fmt.Printf("Test set size 'spam' = %v\n", max)
+	fmt.Printf("\nTest set size 'ham' = %v\n", maxHam)
+	fmt.Printf("Test set size 'spam' = %v\n", maxSpam)
 	fmt.Printf("True Positive = %v\n", tp)
 	fmt.Printf("True Negative = %v\n", tn)
 	fmt.Printf("False Negative = %v\n", fn)
