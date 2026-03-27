@@ -15,8 +15,8 @@ func RunDBScan() {
 
 	options := dbscan.DBSCANOptions{
 		Dataset:   pixel,
-		Epsilon:   5,
-		MinPoints: 20,
+		Epsilon:   25,
+		MinPoints: 700,
 	}
 
 	output := dbscan.DBScan(options)
