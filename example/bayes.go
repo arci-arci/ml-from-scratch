@@ -10,8 +10,7 @@ import (
 
 func RunBayes() {
 	v := common.Vocabulary{}
-	max := 400
-	folders := []string{"enron1"}
+	folders := []string{"enron1", "enron3", "enron5"}
 	hamBoW := common.BoW{}
 	spamBoW := common.BoW{}
 	var totalDocs int
@@ -59,8 +58,9 @@ func RunBayes() {
 	var fn int
 	var tn int
 
+	maxHam := len(hamFile)
 	fmt.Println("Working on 'ham' class")
-	for _, doc := range hamFile[:max] {
+	for _, doc := range hamFile[:maxHam] {
 		hamTestBoW := common.BoW{}
 		err := common.ReadClassDocument(testRootFolder, "ham", doc.Name(), &hamTestBoW)
 		if err != nil {
@@ -88,7 +88,8 @@ func RunBayes() {
 		panic(dirErr)
 	}
 
-	for _, doc := range spamFile[:max] {
+	maxSpam := len(spamFile)
+	for _, doc := range spamFile[:maxSpam] {
 		spamTestBoW := common.BoW{}
 		err := common.ReadClassDocument(testRootFolder, "spam", doc.Name(), &spamTestBoW)
 		if err != nil {
@@ -110,8 +111,8 @@ func RunBayes() {
 		}
 	}
 
-	fmt.Printf("Test set size 'ham' = %v\n", max)
-	fmt.Printf("Test set size 'spam' = %v\n", max)
+	fmt.Printf("Test set size 'ham' = %v\n", maxHam)
+	fmt.Printf("Test set size 'spam' = %v\n", maxSpam)
 	fmt.Printf("True Positive = %v\n", tp)
 	fmt.Printf("True Negative = %v\n", tn)
 	fmt.Printf("False Negative = %v\n", fn)
