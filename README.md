@@ -15,6 +15,19 @@ A simple repository created with the idea of learning Go and Machine Learning by
   - Mean Squared Loss as my loss function;
   - Added a Regularization Term using L2 norm;
 
+### Classification Result
+
+| Model                  | Recall | Precision | Accuracy | Note                                                                                     |
+| ---------------------- | ------ | --------- | -------- | ---------------------------------------------------------------------------------------- |
+| Naive Bayes classifier | 0.97   | 0.99      | 0.97     | smoothing priors set to `1`.                                                             |
+| KNN                    |        |           |          | k set to `8`.                                                                            |
+| Decision Tree          |        |           |          | Max depth set to `25` and the minimun amount of node required for a split is set to `5`. |
+
+Dataset info:
+
+- Training set size: 15859 documents
+- Test set size: 5812 documents
+
 ## Unsupervised Machine Learning
 
 - K-Means
