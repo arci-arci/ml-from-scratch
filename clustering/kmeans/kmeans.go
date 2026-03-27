@@ -107,9 +107,7 @@ func Save(clusters []Cluster, path string) {
 				panic(err)
 			}
 		}
-
 	}
-
 }
 
 func nextClusters(clusters []Cluster) []Cluster {
