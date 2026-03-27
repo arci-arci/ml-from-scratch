@@ -1,4 +1,4 @@
-package clustering
+package kmeans
 
 import (
 	"encoding/csv"
