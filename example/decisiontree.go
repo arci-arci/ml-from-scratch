@@ -9,10 +9,9 @@ import (
 )
 
 func RunDecisionTree() {
-	folders := []string{"enron1"}
+	folders := []string{"enron1", "enron3", "enron5"}
 	classes := []string{"ham", "spam"}
 	model := decisiontree.Train(folders, classes)
-	max := 50
 
 	testDoc := "enron2"
 	testClass := "ham"
@@ -25,8 +24,9 @@ func RunDecisionTree() {
 	var fn int
 
 	fmt.Println("Working on 'ham' class")
+	maxHam := len(hamFile)
 
-	for _, doc := range hamFile[:max] {
+	for _, doc := range hamFile[:maxHam] {
 		bow := common.BoW{}
 		common.ReadClassDocument(testDoc, testClass, doc.Name(), &bow)
 		predictedClass, _ := decisiontree.Fit(&model, &bow)
@@ -47,7 +47,8 @@ func RunDecisionTree() {
 		panic(err)
 	}
 
-	for _, doc := range spamFile[:max] {
+	maxSpam := len(spamFile)
+	for _, doc := range spamFile[:maxSpam] {
 		bow := common.BoW{}
 		common.ReadClassDocument(testDoc, testClass, doc.Name(), &bow)
 		predictedClass, _ := decisiontree.Fit(&model, &bow)
@@ -59,8 +60,8 @@ func RunDecisionTree() {
 		}
 	}
 
-	fmt.Printf("\nTest set size 'ham' = %v\n", max)
-	fmt.Printf("Test set size 'spam' = %v\n", max)
+	fmt.Printf("\nTest set size 'ham' = %v\n", maxHam)
+	fmt.Printf("Test set size 'spam' = %v\n", maxSpam)
 	fmt.Printf("True Positive = %v\n", tp)
 	fmt.Printf("True Negative = %v\n", tn)
 	fmt.Printf("False Negative = %v\n", fn)
