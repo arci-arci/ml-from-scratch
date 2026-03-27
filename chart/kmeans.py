@@ -38,7 +38,7 @@ def read_csv(path: str) -> CsvData:
     data.sort(key=lambda x: x[0])
     grouped_data = groupby(data, lambda x: x[0])
 
-    return [ (key, list(data)) for (key, data) in grouped_data]
+    return [(key, list(data)) for (key, data) in grouped_data]
 
 def convert(data: CsvData):
     cx: list[int] = []
