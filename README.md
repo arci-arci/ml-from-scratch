@@ -17,11 +17,11 @@ A simple repository created with the idea of learning Go and Machine Learning by
 
 ### Classification Result
 
-| Model                  | Recall | Precision | Accuracy | Note                                                                                     |
-| ---------------------- | ------ | --------- | -------- | ---------------------------------------------------------------------------------------- |
-| Naive Bayes classifier | 0.97   | 0.99      | 0.97     | smoothing priors set to `1`.                                                             |
-| KNN                    |        |           |          | k set to `8`.                                                                            |
-| Decision Tree          |        |           |          | Max depth set to `25` and the minimun amount of node required for a split is set to `5`. |
+| Model                  | Recall | Precision | Accuracy | Note                                                                                       |
+| ---------------------- | ------ | --------- | -------- | ------------------------------------------------------------------------------------------ |
+| Naive Bayes classifier | 0.97   | 0.99      | 0.97     | smoothing priors set to `1`.                                                               |
+| KNN                    |        |           |          | k set to `16`.                                                                             |
+| Decision Tree          | 1      | 0.75      | 0.75     | Max depth set to `25` and the minimun amount of node required for a split is set to `100`. |
 
 Dataset info:
 

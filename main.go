@@ -3,5 +3,5 @@ package main
 import example "ml/example"
 
 func main() {
-	example.RunDBScan()
+	example.RunKNN()
 }
