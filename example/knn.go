@@ -12,7 +12,7 @@ func RunKNN() {
 	folders := []string{"enron1", "enron3", "enron5"}
 	classes := []string{"ham", "spam"}
 	model := knn.Train(folders, classes)
-	k := 16
+	k := 32
 
 	testDoc := "enron2"
 	testClass := "ham"
