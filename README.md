@@ -18,10 +18,10 @@ A simple repository created with the idea of learning Go and Machine Learning by
 ### Classification Result
 
 | Model                  | Recall | Precision | Accuracy | Note                                                                                       |
-| ---------------------- | ------ | --------- | -------- | ------------------------------------------------------------------------------------------ |
-| Naive Bayes classifier | 0.97   | 0.99      | 0.97     | smoothing priors set to `1`.                                                               |
+| :--------------------- | :----: | :-------: | :------: | :----------------------------------------------------------------------------------------- |
+| Naive Bayes classifier |  0.97  |   0.99    |   0.97   | smoothing priors set to `1`.                                                               |
 | KNN                    |        |           |          | k set to `32`.                                                                             |
-| Decision Tree          | 1      | 0.75      | 0.75     | Max depth set to `25` and the minimun amount of node required for a split is set to `100`. |
+| Decision Tree          |   1    |   0.75    |   0.75   | Max depth set to `25` and the minimun amount of node required for a split is set to `100`. |
 
 Dataset info:
 
@@ -31,8 +31,8 @@ Dataset info:
 ### Regression Result
 
 | Model             | Mean Absolute Error | Note                                                                                                                                                               |
-| ----------------- | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Linear Regression | 1.272               | Regularization strength set to `0.5`, batch size equals to `30` and `550` epochs. The MAE value was averaged over 5 independent runs using different random seeds. |
+| :---------------- | :-----------------: | :----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Linear Regression |        1.272        | Regularization strength set to `0.5`, batch size equals to `30` and `550` epochs. The MAE value was averaged over 5 independent runs using different random seeds. |
 
 Dataset info:
 
