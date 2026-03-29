@@ -46,6 +46,7 @@ func Train(folders []string, classes []string) KNNModel {
 	v := common.Vocabulary{}
 	db, df := normalize(folders, classes)
 	defineVocabulary(db, &v)
+	common.ClearVocabulary(&v)
 
 	return KNNModel{
 		Points:     db,

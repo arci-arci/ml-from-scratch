@@ -18,6 +18,7 @@ type Vocabulary = map[string]int64
 
 const MIN_WORD_LEN int = 3
 const AVG_TOKEN_AMOUNT int = 83
+const AVG_COLLECTION_FREQ int64 = 13
 
 func ReadContent(path string) (string, error) {
 	data, err := os.ReadFile(path)
@@ -82,8 +83,24 @@ func CreateVocabulary(bow *BoW, v *Vocabulary) {
 }
 
 func CreateWeightedVocabulary(wBoW *WeightedBoW, v *Vocabulary) {
+	// Collect collection frequency
+
 	for t := range *wBoW {
-		(*v)[t] = 1
+		f, ok := (*v)[t]
+
+		if ok {
+			(*v)[t] = f + 1
+		} else {
+			(*v)[t] = 1
+		}
+	}
+}
+
+func ClearVocabulary(v *Vocabulary) {
+	for token, cf := range *v {
+		if cf < AVG_COLLECTION_FREQ {
+			delete(*v, token)
+		}
 	}
 }
 
