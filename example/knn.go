@@ -18,7 +18,7 @@ func RunKNN() {
 	}
 
 	model := knn.Train(options)
-	k := 10
+	k := 32
 
 	testDoc := "enron2"
 	testClass := "ham"
@@ -33,7 +33,7 @@ func RunKNN() {
 	fmt.Println("Working on 'ham' class")
 
 	maxHam := len(hamFile)
-	for _, doc := range hamFile[:10] {
+	for _, doc := range hamFile[:maxHam] {
 		bow := common.BoW{}
 		common.ReadClassDocument(testDoc, testClass, doc.Name(), &bow)
 		class := knn.Fit(&model, &bow, k)
@@ -56,7 +56,7 @@ func RunKNN() {
 	}
 
 	maxSpam := len(spamFile)
-	for _, doc := range spamFile[:10] {
+	for _, doc := range spamFile[:maxSpam] {
 		bow := common.BoW{}
 		common.ReadClassDocument(testDoc, testClass, doc.Name(), &bow)
 		class := knn.Fit(&model, &bow, k)

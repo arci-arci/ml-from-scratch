@@ -79,8 +79,12 @@ func Fit(model *KNNModel, point *common.BoW, k int) string {
 }
 
 func fitRecursive(Q *PriorityQueue, node *Ball, target *common.WeightedBoW, k int, v *common.Vocabulary) {
-	first := Q.Min()
-	distanceToMin := cosineSimilarity(target, first.WBow, v)
+	distanceToMin := math.Inf(1)
+
+	if !Q.IsEmpty() {
+		first := Q.Min()
+		distanceToMin = cosineSimilarity(target, first.WBow, v)
+	}
 
 	// Resolve for first.WBoW what should I set
 
@@ -94,9 +98,10 @@ func fitRecursive(Q *PriorityQueue, node *Ball, target *common.WeightedBoW, k in
 		for _, p := range node.Items {
 			distanceToP := cosineSimilarity(target, p.WBow, v)
 			if distanceToP < distanceToMin {
-				Q.Insert(p, distanceToP)
+				n := Q.Insert(p, distanceToP)
 
-				if Q.Size() > k {
+				if n == nil {
+					// Reached max capacity
 					Q.Delete()
 				}
 			}
