@@ -66,31 +66,6 @@ func Train(options KNNOptions) KNNModel {
 	}
 }
 
-// func FitArray(model *KNNModel, p *common.BoW, k int) string {
-// 	if k <= 0 {
-// 		panic("k parameter must be greater than 0")
-// 	}
-
-// 	neighbors := []Neighbor{}
-// 	target := getWeithedBoW(p, model.Df, model.Size)
-
-// 	for index, q := range model.Points {
-// 		d := cosineSimilarity(&target, q.WBow, model.Vocabulary)
-// 		neighbor := Neighbor{
-// 			Distance: d, Index: index,
-// 			Class: q.Class, DocumentName: q.DocumentName,
-// 		}
-
-// 		neighbors = append(neighbors, neighbor)
-// 	}
-
-// 	sort.Slice(neighbors, func(i int, j int) bool {
-// 		return neighbors[i].Distance > neighbors[j].Distance
-// 	})
-
-// 	return vote(neighbors[:k])
-// }
-
 func Fit(model *KNNModel, point *common.BoW, k int) string {
 	if k <= 0 {
 		panic("k parameter must be greater than 0")
