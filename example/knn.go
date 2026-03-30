@@ -10,14 +10,15 @@ import (
 
 func RunKNN() {
 	options := knn.KNNOptions{
-		Folders: []string{"enron1", "enron3", "enron5"},
-		Classes: []string{"ham", "spam"},
-		MinDf:   5,
-		MaxDf:   400,
+		Folders:  []string{"enron1", "enron3", "enron5"},
+		Classes:  []string{"ham", "spam"},
+		MinDf:    300,
+		MaxDf:    1000,
+		LeafSize: 100,
 	}
 
 	model := knn.Train(options)
-	k := 32
+	k := 10
 
 	testDoc := "enron2"
 	testClass := "ham"
@@ -32,7 +33,7 @@ func RunKNN() {
 	fmt.Println("Working on 'ham' class")
 
 	maxHam := len(hamFile)
-	for _, doc := range hamFile[:maxHam] {
+	for _, doc := range hamFile[:10] {
 		bow := common.BoW{}
 		common.ReadClassDocument(testDoc, testClass, doc.Name(), &bow)
 		class := knn.Fit(&model, &bow, k)
@@ -55,7 +56,7 @@ func RunKNN() {
 	}
 
 	maxSpam := len(spamFile)
-	for _, doc := range spamFile[:maxSpam] {
+	for _, doc := range spamFile[:10] {
 		bow := common.BoW{}
 		common.ReadClassDocument(testDoc, testClass, doc.Name(), &bow)
 		class := knn.Fit(&model, &bow, k)

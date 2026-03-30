@@ -5,7 +5,6 @@ import (
 	"ml/common"
 	"os"
 	"path"
-	"sort"
 	"strings"
 )
 
@@ -19,13 +18,15 @@ type KNNModel struct {
 	Vocabulary *common.Vocabulary
 	Size       int
 	Df         *DocumentFrequency
+	Tree       *BallTree
 }
 
 type KNNOptions struct {
-	Folders []string
-	Classes []string
-	MinDf   int
-	MaxDf   int
+	Folders  []string
+	Classes  []string
+	MinDf    int
+	MaxDf    int
+	LeafSize int
 }
 
 type Neighbor struct {
@@ -54,37 +55,95 @@ func Train(options KNNOptions) KNNModel {
 	db, df := normalize(options)
 	defineVocabulary(df, &v)
 
+	tree := BuildBallTree(db, &v, options.LeafSize)
+
 	return KNNModel{
 		Points:     db,
 		Vocabulary: &v,
 		Size:       len(db),
 		Df:         &df,
+		Tree:       tree,
 	}
 }
 
-func Fit(model *KNNModel, p *common.BoW, k int) string {
+// func FitArray(model *KNNModel, p *common.BoW, k int) string {
+// 	if k <= 0 {
+// 		panic("k parameter must be greater than 0")
+// 	}
+
+// 	neighbors := []Neighbor{}
+// 	target := getWeithedBoW(p, model.Df, model.Size)
+
+// 	for index, q := range model.Points {
+// 		d := cosineSimilarity(&target, q.WBow, model.Vocabulary)
+// 		neighbor := Neighbor{
+// 			Distance: d, Index: index,
+// 			Class: q.Class, DocumentName: q.DocumentName,
+// 		}
+
+// 		neighbors = append(neighbors, neighbor)
+// 	}
+
+// 	sort.Slice(neighbors, func(i int, j int) bool {
+// 		return neighbors[i].Distance > neighbors[j].Distance
+// 	})
+
+// 	return vote(neighbors[:k])
+// }
+
+func Fit(model *KNNModel, point *common.BoW, k int) string {
 	if k <= 0 {
 		panic("k parameter must be greater than 0")
 	}
 
-	neighbors := []Neighbor{}
-	target := getWeithedBoW(p, model.Df, model.Size)
+	Q := CreatePriorityQueue(k)
+	target := getWeithedBoW(point, model.Df, model.Size)
+	fitRecursive(&Q, model.Tree.Root, &target, k, model.Vocabulary)
 
-	for index, q := range model.Points {
-		d := cosineSimilarity(&target, q.WBow, model.Vocabulary)
-		neighbor := Neighbor{
-			Distance: d, Index: index,
-			Class: q.Class, DocumentName: q.DocumentName,
-		}
+	return vote(Q.Items)
+}
 
-		neighbors = append(neighbors, neighbor)
+func fitRecursive(Q *PriorityQueue, node *Ball, target *common.WeightedBoW, k int, v *common.Vocabulary) {
+	first := Q.Min()
+	distanceToMin := cosineSimilarity(target, first.WBow, v)
+
+	// Resolve for first.WBoW what should I set
+
+	if cosineSimilarity(target, &node.Center, v)-node.Radius >= distanceToMin {
+		// Q was not modified
+		return
 	}
 
-	sort.Slice(neighbors, func(i int, j int) bool {
-		return neighbors[i].Distance > neighbors[j].Distance
-	})
+	if IsLeaf(node) {
+		// Check each data point
+		for _, p := range node.Items {
+			distanceToP := cosineSimilarity(target, p.WBow, v)
+			if distanceToP < distanceToMin {
+				Q.Insert(p, distanceToP)
 
-	return vote(neighbors[:k])
+				if Q.Size() > k {
+					Q.Delete()
+				}
+			}
+		}
+
+	} else {
+		childOne := Ball{}
+		childTwo := Ball{}
+		distanceToLeft := cosineSimilarity(target, &node.Left.Center, v)
+		distanceToRight := cosineSimilarity(target, &node.Right.Center, v)
+
+		if distanceToLeft < distanceToRight {
+			childOne = *node.Left
+			childTwo = *node.Right
+		} else {
+			childOne = *node.Right
+			childTwo = *node.Left
+		}
+
+		fitRecursive(Q, &childOne, target, k, v)
+		fitRecursive(Q, &childTwo, target, k, v)
+	}
 }
 
 func defineVocabulary(df DocumentFrequency, v *common.Vocabulary) {
@@ -188,7 +247,7 @@ func addToDocFrequency(df *DocumentFrequency, bow *common.BoW) {
 	}
 }
 
-func vote(neighbors []Neighbor) string {
+func vote(neighbors []PriorityItem) string {
 	classes := []string{"ham", "spam"}
 	foundClass := classes[0]
 	maxFrequency := -1
@@ -197,7 +256,7 @@ func vote(neighbors []Neighbor) string {
 		frequency := 0
 
 		for _, n := range neighbors {
-			if class == n.Class {
+			if class == n.Value.Class {
 				frequency += 1
 			}
 		}
