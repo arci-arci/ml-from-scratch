@@ -18,7 +18,14 @@ type KNNModel struct {
 	Points     []NormalizedDocument
 	Vocabulary *common.Vocabulary
 	Size       int
-	df         *DocumentFrequency
+	Df         *DocumentFrequency
+}
+
+type KNNOptions struct {
+	Folders []string
+	Classes []string
+	MinDf   int
+	MaxDf   int
 }
 
 type Neighbor struct {
@@ -42,17 +49,16 @@ type NormalizedDocument struct {
 
 type DocumentFrequency = map[string]int
 
-func Train(folders []string, classes []string) KNNModel {
+func Train(options KNNOptions) KNNModel {
 	v := common.Vocabulary{}
-	db, df := normalize(folders, classes)
-	defineVocabulary(db, &v)
-	common.ClearVocabulary(&v)
+	db, df := normalize(options)
+	defineVocabulary(df, &v)
 
 	return KNNModel{
 		Points:     db,
 		Vocabulary: &v,
 		Size:       len(db),
-		df:         &df,
+		Df:         &df,
 	}
 }
 
@@ -62,7 +68,7 @@ func Fit(model *KNNModel, p *common.BoW, k int) string {
 	}
 
 	neighbors := []Neighbor{}
-	target := getWeithedBoW(p, model.df, model.Size)
+	target := getWeithedBoW(p, model.Df, model.Size)
 
 	for index, q := range model.Points {
 		d := cosineSimilarity(&target, q.WBow, model.Vocabulary)
@@ -81,14 +87,14 @@ func Fit(model *KNNModel, p *common.BoW, k int) string {
 	return vote(neighbors[:k])
 }
 
-func defineVocabulary(db []NormalizedDocument, v *common.Vocabulary) {
-	for _, document := range db {
-		common.CreateWeightedVocabulary(document.WBow, v)
+func defineVocabulary(df DocumentFrequency, v *common.Vocabulary) {
+	for term, df := range df {
+		(*v)[term] = int64(df)
 	}
 }
 
-func normalize(folders []string, classes []string) ([]NormalizedDocument, DocumentFrequency) {
-	size, err := common.GetCollectionSize(folders, classes)
+func normalize(options KNNOptions) ([]NormalizedDocument, DocumentFrequency) {
+	size, err := common.GetCollectionSize(options.Folders, options.Classes)
 	df := DocumentFrequency{}
 	documentsData := make([]DocumentData, 0, size)
 	normalizedDocuments := make([]NormalizedDocument, 0, size)
@@ -97,8 +103,8 @@ func normalize(folders []string, classes []string) ([]NormalizedDocument, Docume
 		panic(err)
 	}
 
-	for _, folder := range folders {
-		for _, class := range classes {
+	for _, folder := range options.Folders {
+		for _, class := range options.Classes {
 			documents, err := os.ReadDir(path.Join(folder, class))
 			if err != nil {
 				panic(err)
@@ -119,6 +125,12 @@ func normalize(folders []string, classes []string) ([]NormalizedDocument, Docume
 				addToDocFrequency(&df, &bow)
 				documentsData = append(documentsData, DocumentData{DocumentName: document.Name(), Bow: &bow, Class: class})
 			}
+		}
+	}
+
+	for term, docF := range df {
+		if docF < options.MinDf || docF > options.MaxDf {
+			delete(df, term)
 		}
 	}
 

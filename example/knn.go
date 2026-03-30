@@ -9,9 +9,14 @@ import (
 )
 
 func RunKNN() {
-	folders := []string{"enron1", "enron3", "enron5"}
-	classes := []string{"ham", "spam"}
-	model := knn.Train(folders, classes)
+	options := knn.KNNOptions{
+		Folders: []string{"enron1", "enron3", "enron5"},
+		Classes: []string{"ham", "spam"},
+		MinDf:   5,
+		MaxDf:   400,
+	}
+
+	model := knn.Train(options)
 	k := 32
 
 	testDoc := "enron2"
