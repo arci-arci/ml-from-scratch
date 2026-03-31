@@ -180,7 +180,7 @@ func createDecisionTreeRecursive(db []DocumentData, v common.Vocabulary, leafSiz
 	}
 
 	leftNode := createDecisionTreeRecursive(left, v, leafSize, maxDepth, depth+1)
-	rightNode := createDecisionTreeRecursive(right, v, leafSize, maxDepth, +1)
+	rightNode := createDecisionTreeRecursive(right, v, leafSize, maxDepth, depth+1)
 	majority := calculateMajorityClass(classDistribution)
 
 	parent := Node{
