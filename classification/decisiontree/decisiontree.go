@@ -38,14 +38,21 @@ type DecisionTree struct {
 
 type ClassDistribution = map[string]float64
 
+type DecisionTreeOptions struct {
+	Folders  []string
+	Classes  []string
+	MaxDepth int
+	LeafSize int
+}
+
 const MAX_DEPTH int = 25
 const MIN_SAMPLE_SPLIT int = 100
 
-func Train(folders []string, classes []string) DecisionTree {
+func Train(options DecisionTreeOptions) DecisionTree {
 	v := common.Vocabulary{}
-	db := createDatabase(folders, classes)
+	db := createDatabase(options.Folders, options.Classes)
 	defineVocabulary(db, &v)
-	tree := createDecisionTree(db, v)
+	tree := createDecisionTree(db, v, options)
 
 	return tree
 }
@@ -91,17 +98,17 @@ func runFit(root *Node, target *common.BoW) (string, ClassDistribution) {
 	return class, distributions
 }
 
-func createDecisionTree(db []DocumentData, v common.Vocabulary) DecisionTree {
-	root := createDecisionTreeRecursive(db, v, 0)
+func createDecisionTree(db []DocumentData, v common.Vocabulary, options DecisionTreeOptions) DecisionTree {
+	root := createDecisionTreeRecursive(db, v, options.LeafSize, options.MaxDepth, 0)
 	return DecisionTree{
 		Root: &root,
 	}
 }
 
-func createDecisionTreeRecursive(db []DocumentData, v common.Vocabulary, depth int) Node {
+func createDecisionTreeRecursive(db []DocumentData, v common.Vocabulary, leafSize, maxDepth, depth int) Node {
 	classDistribution := calculateClassDistribution(db)
 
-	if depth == MAX_DEPTH {
+	if depth == maxDepth {
 		class := getMostCommonClass(db)
 
 		return Node{
@@ -111,7 +118,7 @@ func createDecisionTreeRecursive(db []DocumentData, v common.Vocabulary, depth i
 		}
 	}
 
-	if len(db) <= MIN_SAMPLE_SPLIT {
+	if len(db) <= leafSize {
 		class := getMostCommonClass(db)
 		return Node{
 			Label:             class,
@@ -175,8 +182,8 @@ func createDecisionTreeRecursive(db []DocumentData, v common.Vocabulary, depth i
 		}
 	}
 
-	leftNode := createDecisionTreeRecursive(left, v, depth+1)
-	rightNode := createDecisionTreeRecursive(right, v, depth+1)
+	leftNode := createDecisionTreeRecursive(left, v, leafSize, maxDepth, depth+1)
+	rightNode := createDecisionTreeRecursive(right, v, leafSize, maxDepth, +1)
 	majority := calculateMajorityClass(classDistribution)
 
 	parent := Node{
