@@ -9,7 +9,6 @@ import (
 )
 
 const initialCap int = 100
-const minNodes int = 60
 
 type SplitFn = func(point NormalizedDocument, dimension string, median float64) bool
 
