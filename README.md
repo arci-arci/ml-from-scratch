@@ -5,7 +5,7 @@ A simple repository created with the idea of learning Go and Machine Learning by
 - Naive Bayes classifier
   - Implemented using [Multinomial Naive Bayes](https://scikit-learn.org/stable/modules/naive_bayes.html#multinomial-naive-bayes) with smoothing priors equal to 1
 - KNN
-  - Implemented using [Ball Tree](https://web.archive.org/web/20251219030314/https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=17ac002939f8e950ffb32ec4dc8e86bdd8cb5ff1), [Wikipedia](https://en.wikipedia.org/wiki/Ball_tree)
+  - Implemented using [Ball Tree data structure](https://web.archive.org/web/20251219030314/https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=17ac002939f8e950ffb32ec4dc8e86bdd8cb5ff1), [Wikipedia](https://en.wikipedia.org/wiki/Ball_tree)
 - Decision Tree
   - Implemented using [ID3 Algorithm](https://en.wikipedia.org/wiki/ID3_algorithm)
 - Linear Regression
