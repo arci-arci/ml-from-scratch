@@ -9,9 +9,14 @@ import (
 )
 
 func RunDecisionTree() {
-	folders := []string{"enron1", "enron3", "enron5"}
-	classes := []string{"ham", "spam"}
-	model := decisiontree.Train(folders, classes)
+	options := decisiontree.DecisionTreeOptions{
+		Folders:  []string{"enron1", "enron3", "enron5"},
+		Classes:  []string{"ham", "spam"},
+		MaxDepth: 25,
+		LeafSize: 100,
+	}
+
+	model := decisiontree.Train(options)
 
 	testDoc := "enron2"
 	testClass := "ham"
