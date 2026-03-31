@@ -45,9 +45,6 @@ type DecisionTreeOptions struct {
 	LeafSize int
 }
 
-const MAX_DEPTH int = 25
-const MIN_SAMPLE_SPLIT int = 100
-
 func Train(options DecisionTreeOptions) DecisionTree {
 	v := common.Vocabulary{}
 	db := createDatabase(options.Folders, options.Classes)
